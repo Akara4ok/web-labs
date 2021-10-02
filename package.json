@@ -5,8 +5,8 @@
     "main": "index.js",
     "scripts": {
         "initeslint": "eslint --init",
-        "lint": "eslint . --no-error-on-unmatched-pattern",
-        "lint:fix": "eslint . --fix",
+        "lint": "eslint . --ignore-path .gitignore  --no-error-on-unmatched-pattern",
+        "lint:fix": "eslint . --ignore-path .gitignore  --fix",
         "lint:style": "stylelint \"**/*.css\"",
         "lint:style:fix": "stylelint \"**/*.css\" --fix",
         "format": "prettier . --check",

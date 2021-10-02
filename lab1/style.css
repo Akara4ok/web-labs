@@ -69,6 +69,7 @@ aside {
     justify-content: start;
     background-color: var(--nav-background-color);
     min-height: var(--aside-min-height);
+    flex-grow: 1;
 }
 
 .interesting-fact-2 {
@@ -77,9 +78,10 @@ aside {
     justify-content: start;
     background-color: var(--aside-background-color);
     min-height: var(--aside-min-height);
+    flex-grow: 1;
 }
 
-.main-info {
+main {
     grid-area: main;
     background-color: var(--main-background-color);
     display: flex;
@@ -88,7 +90,7 @@ aside {
     position: relative;
 }
 
-.main-info article {
+main article {
     width: var(--main-article-width);
 }
 
@@ -143,7 +145,7 @@ footer div {
     justify-content: end;
 }
 
-main {
+body {
     padding: var(--no-padding);
     position: absolute;
     height: auto;
