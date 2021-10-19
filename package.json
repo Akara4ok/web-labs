@@ -7,9 +7,9 @@
         "initeslint": "eslint --init",
         "lint": "eslint . --ignore-path .gitignore  --no-error-on-unmatched-pattern",
         "lint:fix": "eslint . --ignore-path .gitignore  --fix",
-        "lint:style": "stylelint \"**/*.css\"",
+        "lint:style": "stylelint \"**/*.css\" --ignore-path .gitignore",
         "lint:style:fix": "stylelint \"**/*.css\" --fix",
-        "format": "prettier . --check",
+        "format": "prettier . --check --ignore-path .gitignore",
         "format:fix": "prettier . --write",
         "huskyinstall": "husky install"
     },
