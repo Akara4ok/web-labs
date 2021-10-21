@@ -18,7 +18,8 @@
         "nodemailer": "^6.7.0",
         "sanitize-html": "^2.5.2",
         "express": "^4.17.1",
-        "express-rate-limit": "^5.5.0"
+        "express-rate-limit": "^5.5.0",
+        "path": "^0.12.7"
     },
     "devDependencies": {
         "firebase-functions-test": "^0.2.0"
