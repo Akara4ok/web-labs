@@ -1,3 +1,4 @@
+const functions = require('firebase-functions');
 const express = require('express');
 const path = require('path');
 const nodemailer = require('nodemailer');
@@ -12,12 +13,12 @@ app.use(
     express.static(path.join(__dirname, '../Frontend/dist')),
 );
 
-app.use((req, res, next) => {
+/*app.use((req, res, next) => {
     res.set('Access-Control-Allow-Origin', 'http://localhost:8080');
     res.set('Access-Control-Allow-Headers', '*');
     res.set('Access-Control-Allow-Methods', '*');
     next();
-});
+});*/
 
 const apiLimiter = rateLimit({
     windowMs: 1 * 60 * 1000,
@@ -81,4 +82,4 @@ app.post('/send', async (req, res) => {
     });
 });
 
-app.listen(3000, console.log(`Server started`));
+exports.api = functions.https.onRequest(app);
