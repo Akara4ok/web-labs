@@ -13,12 +13,12 @@ app.use(
     express.static(path.join(__dirname, '../Frontend/dist')),
 );
 
-/*app.use((req, res, next) => {
+app.use((req, res, next) => {
     res.set('Access-Control-Allow-Origin', 'http://localhost:8080');
     res.set('Access-Control-Allow-Headers', '*');
     res.set('Access-Control-Allow-Methods', '*');
     next();
-});*/
+});
 
 const apiLimiter = rateLimit({
     windowMs: 1 * 60 * 1000,
