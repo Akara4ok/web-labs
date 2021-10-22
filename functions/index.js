@@ -14,7 +14,10 @@ app.use(
 );
 
 app.use((req, res, next) => {
-    res.set('Access-Control-Allow-Origin', '*');
+    res.set(
+        'Access-Control-Allow-Origin',
+        'https://mail-sender-10d73--pr6-lab2-f0t2q7r2.web.app',
+    );
     res.set('Access-Control-Allow-Headers', '*');
     res.set('Access-Control-Allow-Methods', '*');
     next();
