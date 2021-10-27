@@ -1,9 +1,12 @@
+/*eslint-disable */
 const functions = require('firebase-functions');
+/*eslint-enable */
 const express = require('express');
 const path = require('path');
 const nodemailer = require('nodemailer');
 const rateLimit = require('express-rate-limit');
 const sanitizeHtml = require('sanitize-html');
+//const { firebaseConfig } = require('firebase-functions');
 
 const app = express();
 
@@ -57,8 +60,8 @@ app.post('/send', async (req, res) => {
             port: 587,
             secure: false, // true for 465, false for other ports
             auth: {
-                user: 'nodemailer1234567891011@gmail.com',
-                pass: 'Qwerty123#', // generated ethereal password
+                user: `${functions.email.address.secret}`,
+                pass: `${functions.email.pass.secret}`,
             },
             tls: {
                 rejectUnauthorized: false,
@@ -67,7 +70,7 @@ app.post('/send', async (req, res) => {
 
         // send mail with defined transport object
         await transporter.sendMail({
-            from: `${req.body.name} <nodemailer1234567891011@gmail.com>`,
+            from: `${req.body.name} <${functions.email.address.secret}>`,
             to: `${req.body.email}`, // list of receivers
             subject: 'Hello', // Subject line
             text: 'Hello world?', // plain text body
