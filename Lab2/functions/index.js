@@ -2,7 +2,6 @@
 const functions = require('firebase-functions');
 /*eslint-enable */
 const nodemailer = require('nodemailer');
-//const rateLimit = require('express-rate-limit');
 const sanitizeHtml = require('sanitize-html');
 
 function validateEmail(email) {
@@ -72,7 +71,7 @@ exports.api = functions.https.onRequest(async (req, res) => {
         const output = `<p>${cleanMessage}</p>`;
         const transporter = nodemailer.createTransport({
             host: functions.config().email.host,
-            port: 587,
+            port: functions.config().email.port,
             secure: false,
             auth: {
                 user: functions.config().email.address,
