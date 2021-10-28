@@ -60,8 +60,8 @@ app.post('/send', async (req, res) => {
             port: 587,
             secure: false, // true for 465, false for other ports
             auth: {
-                user: `${functions.email.address.secret}`,
-                pass: `${functions.email.pass.secret}`,
+                user: functions.config().email.address,
+                pass: functions.config().email.pass,
             },
             tls: {
                 rejectUnauthorized: false,
@@ -70,7 +70,7 @@ app.post('/send', async (req, res) => {
 
         // send mail with defined transport object
         await transporter.sendMail({
-            from: `${req.body.name} <${functions.email.address.secret}>`,
+            from: `${req.body.name} <${functions.config().email.address}>`,
             to: `${req.body.email}`, // list of receivers
             subject: 'Hello', // Subject line
             text: 'Hello world?', // plain text body
