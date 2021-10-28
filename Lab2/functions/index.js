@@ -5,12 +5,6 @@ const nodemailer = require('nodemailer');
 //const rateLimit = require('express-rate-limit');
 const sanitizeHtml = require('sanitize-html');
 
-/*const apiLimiter = rateLimit({
-    windowMs: 1 * 60 * 1000,
-    max: 2,
-    skip: req => req.method === 'OPTIONS',
-});*/
-
 function validateEmail(email) {
     /*eslint-disable */
     const re =
