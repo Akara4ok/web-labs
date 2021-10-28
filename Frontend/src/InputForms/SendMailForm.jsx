@@ -12,9 +12,9 @@ class SendMailForm extends React.Component {
         super(props);
         this.state = {
             isRequest: false,
-            isNameCorrect: false,
-            isEmailCorrect: false,
-            isMessageCorrect: false,
+            isNameCorrect: true,
+            isEmailCorrect: true,
+            isMessageCorrect: true,
             isSuccess: false,
             isPopupOnScreen: false,
             isRateLimit: false,
@@ -42,7 +42,7 @@ class SendMailForm extends React.Component {
         this.setState({ isPopupOnScreen: true });
         axios
             .post(
-                'https://us-central1-mail-sender-10d73.cloudfunctions.net/api/send',
+                'https://us-central1-mail-sender-10d73.cloudfunctions.net/api',
                 {
                     name,
                     email,
