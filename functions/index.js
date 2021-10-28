@@ -23,7 +23,7 @@ exports.api = functions.https.onRequest(async (req, res) => {
     const headers = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'OPTIONS, POST, GET',
-        'Access-Control-Max-Age': 2592000,
+        'Access-Control-Allow-Headers': '*',
     };
 
     if (req.method === 'OPTIONS') {
