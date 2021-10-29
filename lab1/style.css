@@ -64,6 +64,7 @@ aside {
 }
 
 .interesting-fact-1 {
+    flex-direction: column;
     display: flex;
     align-items: center;
     justify-content: start;
@@ -73,6 +74,7 @@ aside {
 }
 
 .interesting-fact-2 {
+    flex-direction: column;
     display: flex;
     align-items: center;
     justify-content: start;
