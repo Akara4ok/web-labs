@@ -2,7 +2,7 @@ import React from 'react';
 import classes from './SendMailForm.scss';
 import InputField from './InputField';
 import TextAreaField from './TextAreaField';
-import Spinner from './../Popup/Spinner';
+import Spinner from '../Popup/Spinner';
 import Popup from '../Popup/Popup';
 import Message from '../Popup/Message';
 import axios from 'axios';
@@ -12,9 +12,9 @@ class SendMailForm extends React.Component {
         super(props);
         this.state = {
             isRequest: false,
-            isNameCorrect: true,
-            isEmailCorrect: true,
-            isMessageCorrect: true,
+            isNameCorrect: false,
+            isEmailCorrect: false,
+            isMessageCorrect: false,
             isSuccess: false,
             isPopupOnScreen: false,
             isRateLimit: false,
@@ -42,7 +42,7 @@ class SendMailForm extends React.Component {
         this.setState({ isPopupOnScreen: true });
         axios
             .post(
-                'https://us-central1-mail-sender-10d73.cloudfunctions.net/api',
+                'https://us-central1-mail-sender-10d73.cloudfunctions.net/api/send',
                 {
                     name,
                     email,
