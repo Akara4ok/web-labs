@@ -14,3 +14,4 @@ jobs:
                   repoToken: '${{ secrets.GITHUB_TOKEN }}'
                   firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MAIL_SENDER_10D73 }}'
                   projectId: mail-sender-10d73
+                  channelId: live
