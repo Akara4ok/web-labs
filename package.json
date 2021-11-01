@@ -6,10 +6,10 @@
     "scripts": {
         "lint": "eslint . --ignore-path .gitignore --no-error-on-unmatched-pattern",
         "lint:fix": "eslint . --fix --ignore-path .gitignore",
-        "format": "prettier --check .",
-        "format:fix": "prettier . --write",
+        "format": "prettier --ignore-path .gitignore --check .",
+        "format:fix": "prettier --ignore-path .gitignore . --write",
         "lint:style": "stylelint --ignore-path .gitignore \"./**/*.scss\"",
-        "lint:style:fix": "npm run lint:style -- --fix",
+        "lint:style:fix": "npm run lint:style --ignore-path .gitignore -- --fix",
         "prepare": "husky install",
         "sass": "sass .",
         "start": "webpack-dev-server --hot --open --mode development",
@@ -45,15 +45,11 @@
         "stylelint-declaration-use-variable": "^1.7.3",
         "webpack": "^5.59.1",
         "webpack-cli": "^4.9.1",
-        "webpack-dev-server": "^4.3.0"
+        "webpack-dev-server": "^4.3.0",
+        "firebase-admin": "^10.0.0"
     },
     "dependencies": {
         "axios": "^0.21.4",
-        "cors": "^2.8.5",
-        "express": "^4.17.1",
-        "express-rate-limit": "^5.5.0",
-        "firebase-admin": "^10.0.0",
-        "firebase-functions-rate-limiter": "^3.8.3",
         "nodemailer": "^6.7.0",
         "path": "^0.12.7",
         "react": "^17.0.2",

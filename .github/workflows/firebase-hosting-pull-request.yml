@@ -15,3 +15,5 @@ jobs:
                   firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MAIL_SENDER_10D73 }}'
                   projectId: mail-sender-10d73
                   channelId: live
+                  node-version: '16'
+                  cache: 'npm'

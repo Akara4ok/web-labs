@@ -9,7 +9,7 @@
         "logs": "firebase functions:log"
     },
     "engines": {
-        "node": "14"
+        "node": "16"
     },
     "main": "index.js",
     "dependencies": {
@@ -17,8 +17,6 @@
         "firebase-functions": "^3.14.1",
         "nodemailer": "^6.7.0",
         "sanitize-html": "^2.5.2",
-        "express": "^4.17.1",
-        "express-rate-limit": "^5.5.0",
         "path": "^0.12.7"
     },
     "devDependencies": {
