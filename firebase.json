@@ -8,8 +8,8 @@
                 "destination": "/index.html"
             },
             {
-                "source": "/api",
-                "function": "api"
+                "source": "/api/send",
+                "function": "send"
             }
         ]
     },

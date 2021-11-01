@@ -18,7 +18,7 @@ const rateLimit = {
     ipData: new Map(),
 };
 
-exports.api = functions.https.onRequest(async (req, res) => {
+exports.send = functions.https.onRequest(async (req, res) => {
     let isSuccess = true;
     let isNameCorrect = true;
     let isEmailCorrect = true;
