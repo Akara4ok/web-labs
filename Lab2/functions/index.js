@@ -19,20 +19,6 @@ const rateLimit = {
 };
 
 exports.api = functions.https.onRequest(async (req, res) => {
-    const headers = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'OPTIONS, POST, GET',
-        'Access-Control-Max-Age': 2592000,
-        'Access-Control-Allow-Headers': '*',
-    };
-
-    if (req.method === 'OPTIONS') {
-        res.writeHead(200, headers);
-        res.end();
-        return;
-    }
-
-    res.setHeader('Access-Control-Allow-Origin', '*');
     let isSuccess = true;
     let isNameCorrect = true;
     let isEmailCorrect = true;
