@@ -56,5 +56,5 @@
         "react-dom": "^17.0.2",
         "sanitize-html": "^2.5.2"
     },
-    "proxy": "https://us-central1-mail-sender-10d73.cloudfunctions.net/api"
+    "proxy": "https://us-central1-mail-sender-10d73.cloudfunctions.net/send"
 }

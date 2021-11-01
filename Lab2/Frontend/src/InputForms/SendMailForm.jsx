@@ -41,7 +41,7 @@ class SendMailForm extends React.Component {
         this.setState({ isRequest: true });
         this.setState({ isPopupOnScreen: true });
         axios
-            .post('/api/send', {
+            .post('/send', {
                 name,
                 email,
                 message,
