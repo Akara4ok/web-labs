@@ -41,24 +41,27 @@ exports.api = functions.https.onRequest(async (req, res) => {
     const currentIp = req.headers['fastly-client-ip'];
     let currentIpUser = {};
     const currentTime = new Date();
-    if (rateLimit.ipData.get(currentIp) === undefined) {
-        rateLimit.ipData.set(currentIp, { count: 1, time: currentTime });
-    } else {
-        currentIpUser = rateLimit.ipData.get(currentIp);
-        if (
-            currentIpUser.count + 1 > rateLimit.ipNumberCalls ||
-            currentTime - currentIpUser.time <= rateLimit.timeSeconds * 1000
-        ) {
-            res.status(429).json({
-                isNameCorrect,
-                isEmailCorrect,
-                isMessageCorrect,
-                isSuccess: false,
-            });
-            return;
-        }
-    }
+
     currentIpUser = rateLimit.ipData.get(currentIp);
+
+    if (!currentIpUser) {
+        currentIpUser = { count: 0, time: currentTime };
+    }
+
+    if (
+        !currentIpUser.count &&
+        (currentIpUser.count + 1 > rateLimit.ipNumberCalls ||
+            currentTime - currentIpUser.time <= rateLimit.timeSeconds * 1000)
+    ) {
+        res.status(429).json({
+            isNameCorrect,
+            isEmailCorrect,
+            isMessageCorrect,
+            isSuccess: false,
+        });
+        return;
+    }
+
     currentIpUser.count += 1;
     currentIpUser.time = new Date();
     rateLimit.ipData.set(currentIp, currentIpUser);
