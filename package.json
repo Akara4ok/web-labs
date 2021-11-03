@@ -54,7 +54,6 @@
         "path": "^0.12.7",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
-        "sanitize-html": "^2.5.2"
-    },
-    "proxy": "https://us-central1-mail-sender-10d73.cloudfunctions.net/send"
+        "sanitize-html": "^2.5.3"
+    }
 }

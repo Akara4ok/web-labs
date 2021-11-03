@@ -5,10 +5,8 @@ const nodemailer = require('nodemailer');
 const sanitizeHtml = require('sanitize-html');
 
 function validateEmail(email) {
-    /*eslint-disable */
     const re =
         /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    /*eslint-enable */
     return re.test(String(email).toLowerCase());
 }
 
@@ -18,7 +16,7 @@ const rateLimit = {
     ipData: new Map(),
 };
 
-exports.send = functions.https.onRequest(async (req, res) => {
+exports.api = functions.https.onRequest(async (req, res) => {
     let isSuccess = true;
     let isNameCorrect = true;
     let isEmailCorrect = true;
@@ -30,12 +28,12 @@ exports.send = functions.https.onRequest(async (req, res) => {
 
     currentIpUser = rateLimit.ipData.get(currentIp);
 
-    if (!currentIpUser) {
+    if (currentIpUser === undefined) {
         currentIpUser = { count: 0, time: currentTime };
     }
 
     if (
-        !currentIpUser.count &&
+        currentIpUser.count !== 0 &&
         (currentIpUser.count + 1 > rateLimit.ipNumberCalls ||
             currentTime - currentIpUser.time <= rateLimit.timeSeconds * 1000)
     ) {
