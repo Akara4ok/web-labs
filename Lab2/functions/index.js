@@ -38,12 +38,12 @@ exports.api = functions.https.onRequest(async (req, res) => {
 
     currentIpUser = rateLimit.ipData.get(currentIp);
 
-    if (currentIpUser === undefined) {
+    if (!currentIpUser) {
         currentIpUser = { count: 0, time: currentTime };
     }
 
     if (
-        currentIpUser.count !== 0 &&
+        currentIpUser.count &&
         (currentIpUser.count + 1 > rateLimit.ipNumberCalls ||
             currentTime - currentIpUser.time <= rateLimit.timeSeconds * 1000)
     ) {
@@ -74,7 +74,13 @@ exports.api = functions.https.onRequest(async (req, res) => {
         messages.push('Enter correct message');
         isSuccess = false;
     }
-    if (!isSuccess) return;
+    if (!isSuccess) {
+        res.json({
+            isSuccess,
+            messages,
+        });
+        return;
+    }
 
     const output = `<p>${cleanMessage}</p>`;
 

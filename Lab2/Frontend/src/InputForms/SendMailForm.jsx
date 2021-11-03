@@ -12,7 +12,7 @@ class SendMailForm extends React.Component {
         super(props);
         this.state = {
             isRequest: false,
-            messages: '[]',
+            messages: [],
             isSuccess: false,
             isPopupOnScreen: false,
             isRateLimit: false,
@@ -45,6 +45,7 @@ class SendMailForm extends React.Component {
             .then(res => {
                 this.setState({
                     messages: res.data.messages,
+                    isRequest: false,
                     isSuccess: res.data.isSuccess,
                     name: '',
                     email: '',
@@ -61,13 +62,15 @@ class SendMailForm extends React.Component {
 
                 if (!error.response.data || error.response.status !== 429) {
                     this.setState({
-                        messages: '["Something went wrong..."]',
+                        messages: ['Something went wrong...'],
                     });
                     return;
                 }
                 this.setState({
-                    messages: error.response.data,
+                    messages: error.response.data.messages,
                 });
+                console.log(this.state.messages);
+                console.log('Hi');
             });
     };
 
@@ -122,7 +125,7 @@ class SendMailForm extends React.Component {
                             <Message
                                 className={this.state.isSuccess}
                                 onClose={this.onOkClicked}>
-                                {this.state.messages.forEach(element => (
+                                {this.state.messages.map(element => (
                                     <div>{element}</div>
                                 ))}
                             </Message>
