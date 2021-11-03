@@ -16,12 +16,22 @@ const rateLimit = {
     ipData: new Map(),
 };
 
-exports.api = functions.https.onRequest(async (req, res) => {
-    let isSuccess = true;
-    let isNameCorrect = true;
-    let isEmailCorrect = true;
-    let isMessageCorrect = true;
+const transporter = nodemailer.createTransport({
+    host: functions.config().email.host,
+    port: functions.config().email.port,
+    secure: false,
+    auth: {
+        user: functions.config().email.address,
+        pass: functions.config().email.pass,
+    },
+    tls: {
+        rejectUnauthorized: false,
+    },
+});
 
+exports.api = functions.https.onRequest(async (req, res) => {
+    const messages = [];
+    let isSuccess = [];
     const currentIp = req.headers['fastly-client-ip'];
     let currentIpUser = {};
     const currentTime = new Date();
@@ -37,11 +47,11 @@ exports.api = functions.https.onRequest(async (req, res) => {
         (currentIpUser.count + 1 > rateLimit.ipNumberCalls ||
             currentTime - currentIpUser.time <= rateLimit.timeSeconds * 1000)
     ) {
+        isSuccess = false;
+        messages.push('Too many requests. Please try later');
         res.status(429).json({
-            isNameCorrect,
-            isEmailCorrect,
-            isMessageCorrect,
-            isSuccess: false,
+            isSuccess,
+            messages,
         });
         return;
     }
@@ -51,39 +61,33 @@ exports.api = functions.https.onRequest(async (req, res) => {
     rateLimit.ipData.set(currentIp, currentIpUser);
 
     const cleanMessage = sanitizeHtml(req.body.message);
-    if (req.body.name === '') isNameCorrect = false;
-    if (!validateEmail(req.body.email)) isEmailCorrect = false;
-    if (cleanMessage === '') isMessageCorrect = false;
-    if (isNameCorrect && isEmailCorrect && isMessageCorrect) {
-        const output = `<p>${cleanMessage}</p>`;
-        const transporter = nodemailer.createTransport({
-            host: functions.config().email.host,
-            port: functions.config().email.port,
-            secure: false,
-            auth: {
-                user: functions.config().email.address,
-                pass: functions.config().email.pass,
-            },
-            tls: {
-                rejectUnauthorized: false,
-            },
-        });
-
-        await transporter.sendMail({
-            from: `${req.body.name} <${functions.config().email.address}>`,
-            to: `${req.body.email}`,
-            subject: 'Hello',
-            text: 'Hello world?',
-            html: output,
-        });
-    } else {
+    isSuccess = true;
+    if (!req.body.name) {
+        messages.push('Enter correct name');
         isSuccess = false;
     }
+    if (!validateEmail(req.body.email)) {
+        messages.push('Enter correct e-mail');
+        isSuccess = false;
+    }
+    if (!cleanMessage) {
+        messages.push('Enter correct message');
+        isSuccess = false;
+    }
+    if (!isSuccess) return;
 
+    const output = `<p>${cleanMessage}</p>`;
+
+    await transporter.sendMail({
+        from: `${req.body.name} <${functions.config().email.address}>`,
+        to: `${req.body.email}`,
+        subject: 'Hello',
+        text: 'Hello world?',
+        html: output,
+    });
+    messages.push('Your message was successfully sent');
     res.json({
-        isNameCorrect,
-        isEmailCorrect,
-        isMessageCorrect,
         isSuccess,
+        messages,
     });
 });

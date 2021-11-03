@@ -6,17 +6,13 @@ import Spinner from '../Popup/Spinner';
 import Popup from '../Popup/Popup';
 import Message from '../Popup/Message';
 import axios from 'axios';
-import messages from './errorMap';
 
 class SendMailForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             isRequest: false,
-            isNameCorrect: true,
-            isEmailCorrect: true,
-            isMessageCorrect: true,
-            isAnotherError: false,
+            messages: '[]',
             isSuccess: false,
             isPopupOnScreen: false,
             isRateLimit: false,
@@ -30,10 +26,7 @@ class SendMailForm extends React.Component {
         event.preventDefault();
         const {
             isRequest,
-            isNameCorrect,
-            isEmailCorrect,
-            isMessageCorrect,
-            isAnotherError,
+            messages,
             isSuccess,
             isPopupOnScreen,
             isRateLimit,
@@ -51,11 +44,7 @@ class SendMailForm extends React.Component {
             })
             .then(res => {
                 this.setState({
-                    isRequest: false,
-                    isNameCorrect: res.data.isNameCorrect,
-                    isEmailCorrect: res.data.isEmailCorrect,
-                    isMessageCorrect: res.data.isMessageCorrect,
-                    isRateLimit: false,
+                    messages: res.data.messages,
                     isSuccess: res.data.isSuccess,
                     name: '',
                     email: '',
@@ -72,12 +61,12 @@ class SendMailForm extends React.Component {
 
                 if (!error.response.data || error.response.status !== 429) {
                     this.setState({
-                        isAnotherError: true,
+                        messages: '["Something went wrong..."]',
                     });
                     return;
                 }
                 this.setState({
-                    isRateLimit: true,
+                    messages: error.response.data,
                 });
             });
     };
@@ -133,31 +122,9 @@ class SendMailForm extends React.Component {
                             <Message
                                 className={this.state.isSuccess}
                                 onClose={this.onOkClicked}>
-                                {this.state.isSuccess ? (
-                                    <div>{messages.messageSuccess}</div>
-                                ) : null}
-
-                                {!this.state.isNameCorrect ? (
-                                    <div>Enter correct name</div>
-                                ) : null}
-
-                                {!this.state.isEmailCorrect ? (
-                                    <div>Enter correct e-mail</div>
-                                ) : null}
-
-                                {!this.state.isMessageCorrect ? (
-                                    <div>Enter correct message</div>
-                                ) : null}
-
-                                {this.state.isRateLimit ? (
-                                    <div>
-                                        Too many requests. Please try later
-                                    </div>
-                                ) : null}
-
-                                {this.state.isAnotherError ? (
-                                    <div>Something went wrong...</div>
-                                ) : null}
+                                {this.state.messages.forEach(element => (
+                                    <div>{element}</div>
+                                ))}
                             </Message>
                         )}
                     </Popup>
