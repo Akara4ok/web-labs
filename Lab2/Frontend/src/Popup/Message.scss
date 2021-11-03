@@ -1,5 +1,7 @@
 * {
     --message-border: #604cc7;
+    --messsage-color: #403866;
+    --error-color: rgb(255, 0, 0);
     --message-background: #fff;
     --message-border-size: 5px;
     --message-border-radius: 10px;
@@ -53,4 +55,12 @@ div {
     outline: var(--input-border);
     position: absolute;
     width: var(--button-width);
+}
+
+.error {
+    color: var(--error-color);
+}
+
+.success {
+    color: var(--messsage-color);
 }

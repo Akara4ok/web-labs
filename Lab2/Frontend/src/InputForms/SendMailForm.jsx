@@ -6,15 +6,17 @@ import Spinner from '../Popup/Spinner';
 import Popup from '../Popup/Popup';
 import Message from '../Popup/Message';
 import axios from 'axios';
+import messages from './errorMap';
 
 class SendMailForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             isRequest: false,
-            isNameCorrect: false,
-            isEmailCorrect: false,
-            isMessageCorrect: false,
+            isNameCorrect: true,
+            isEmailCorrect: true,
+            isMessageCorrect: true,
+            isAnotherError: false,
             isSuccess: false,
             isPopupOnScreen: false,
             isRateLimit: false,
@@ -31,6 +33,7 @@ class SendMailForm extends React.Component {
             isNameCorrect,
             isEmailCorrect,
             isMessageCorrect,
+            isAnotherError,
             isSuccess,
             isPopupOnScreen,
             isRateLimit,
@@ -62,11 +65,19 @@ class SendMailForm extends React.Component {
                 console.log(res.data.isSuccess);
             })
             .catch(error => {
-                console.log(error);
                 this.setState({
                     isRequest: false,
+                    isSuccess: false,
+                });
+
+                if (!error.response.data || error.response.status !== 429) {
+                    this.setState({
+                        isAnotherError: true,
+                    });
+                    return;
+                }
+                this.setState({
                     isRateLimit: true,
-                    isSuccess: error.response.data.isSuccess,
                 });
             });
     };
@@ -120,14 +131,10 @@ class SendMailForm extends React.Component {
                             <Spinner />
                         ) : (
                             <Message
-                                textColor={
-                                    this.state.isSuccess ? '#403866' : 'red'
-                                }
+                                className={this.state.isSuccess}
                                 onClose={this.onOkClicked}>
                                 {this.state.isSuccess ? (
-                                    <div>
-                                        Your message was successfully sent
-                                    </div>
+                                    <div>{messages.messageSuccess}</div>
                                 ) : null}
 
                                 {!this.state.isNameCorrect ? (
@@ -146,6 +153,10 @@ class SendMailForm extends React.Component {
                                     <div>
                                         Too many requests. Please try later
                                     </div>
+                                ) : null}
+
+                                {this.state.isAnotherError ? (
+                                    <div>Something went wrong...</div>
                                 ) : null}
                             </Message>
                         )}

@@ -9,8 +9,10 @@ class Message extends React.Component {
         return (
             <div className={classes.message}>
                 <div
-                    className={classes.text}
-                    style={{ color: `${this.props.textColor}` }}>
+                    //className={classes.text}
+                    className={`${classes.text} ${
+                        this.props.className ? classes.success : classes.error
+                    }`}>
                     {this.props.children}
                 </div>
                 <button className={classes.button} onClick={this.props.onClose}>
