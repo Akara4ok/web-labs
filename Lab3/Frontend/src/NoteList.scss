@@ -1,0 +1,79 @@
+* {
+    --note-background-color: #ffe739;
+    --note-selection-background-color: rgb(128, 128, 128);
+    --note-selection-text-color: #fff;
+    --box-shadow-color: #696666;
+    --line-background-color: #ffc317;
+}
+
+.note {
+    background-color: var(--note-background-color);
+    border-radius: 5px;
+    height: 250px;
+    margin: 25px;
+    position: relative;
+    width: 320px;
+    input {
+        background-color: transparent;
+        border: 0;
+        font-family: cursive;
+        max-width: 100%;
+        outline: none;
+        overflow: hidden;
+    }
+    ::selection {
+        background-color: var(--note-selection-background-color);
+        color: var(--note-selection-text-color);
+    }
+    button {
+        margin-left: 13px;
+    }
+}
+
+.noteHead {
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-align: center;
+    top: 20%;
+}
+
+.line {
+    background: linear-gradient(
+        var(--note-background-color),
+        var(--line-background-color)
+    );
+    height: 25px;
+    margin-bottom: 10px;
+    width: 100%;
+    button {
+        position: absolute;
+        right: 0;
+        top: 0;
+        visibility: hidden;
+    }
+}
+
+.note:hover {
+    .line {
+        button {
+            visibility: visible;
+        }
+    }
+}
+
+.note::before,
+.note::after {
+    bottom: 10px;
+    box-shadow: 0 8px 15px var(--box-shadow-color);
+    content: '';
+    height: 10px;
+    position: absolute;
+    width: 40%;
+    z-index: -1;
+}
+
+.note::after {
+    right: 10px;
+    transform: skewY(5deg) rotateX(5deg);
+}

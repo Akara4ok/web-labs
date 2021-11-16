@@ -1,0 +1,42 @@
+* {
+    --header-border-color: rgb(128, 128, 128);
+    --header-text-color: rgb(71, 71, 71);
+    --header-button-background-color: #ffd000;
+    --header-button-text-color: #000;
+}
+
+header {
+    align-items: center;
+    border-bottom: 2px solid;
+    border-bottom-color: var(--header-border-color);
+    display: flex;
+    height: 70px;
+    position: relative;
+
+    h1 {
+        color: var(--header-text-color);
+        margin-left: 10px;
+    }
+
+    button {
+        background-color: var(--header-button-background-color);
+        border: 0;
+        border-radius: 12px;
+        box-sizing: border-box;
+        color: var(--header-button-text-color);
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        padding: 10px 15px;
+        position: absolute;
+        right: 10px;
+        text-align: center;
+        width: 150px;
+    }
+}
+
+main {
+    display: flex;
+    flex-wrap: wrap;
+    font-family: cursive;
+}
