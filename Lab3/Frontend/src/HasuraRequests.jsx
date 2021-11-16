@@ -18,16 +18,17 @@ async function fetchGraphQL(operationsDoc, operationName, variables) {
 
 const operationsDoc = `
     query selectListName {
-        ListName {
-          Id
-          ListName
-          Tasks{
+        ListName(order_by: { Id: asc }) {
             Id
-            TaskName
-            Checked
-          }
+            ListName
+            Tasks(order_by: { Id: asc }) {
+                Checked
+                Id
+                IdList
+                TaskName
+            }
         }
-      }
+    }
     mutation deleteTask($Id: Int) {
         delete_Tasks(where: {Id: {_eq: $Id}}) {
           affected_rows

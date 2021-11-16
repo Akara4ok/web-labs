@@ -18,7 +18,6 @@ class NoteLine extends React.PureComponent {
     componentDidUpdate = () => {
         if (this.props.isChecked !== undefined) {
             let isTaskDone = this.props.isChecked;
-            console.log(isTaskDone);
             this.setState({ isTaskDone });
         }
     };
@@ -76,7 +75,7 @@ class NoteLine extends React.PureComponent {
                             this.setState({ lineValue });
                         }}
                         value={lineValue}
-                        autoFocus={!this.props.isOldLine}
+                        autoFocus={!lineValue}
                         maxLength="30"
                     />
                 </label>

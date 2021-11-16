@@ -46,13 +46,14 @@ export const apolloClient = new ApolloClient({
 
 const tasksSubscriptions = gql`
     subscription tasksSubscriptions {
-        ListName {
+        ListName(order_by: { Id: asc }) {
             Id
             ListName
-            Tasks {
-                Id
-                TaskName
+            Tasks(order_by: { Id: asc }) {
                 Checked
+                Id
+                IdList
+                TaskName
             }
         }
     }
@@ -60,6 +61,5 @@ const tasksSubscriptions = gql`
 
 export default function LastChanges() {
     const { data, loading } = useSubscription(tasksSubscriptions);
-    console.log(data);
     return <Layout data={data} />;
 }

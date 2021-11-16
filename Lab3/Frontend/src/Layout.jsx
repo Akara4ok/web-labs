@@ -13,7 +13,6 @@ class Layout extends React.PureComponent {
         this.state = {
             autokey: 0,
             Notes: [],
-            isOldTask: [],
             isLoading: true,
             lim: 5,
         };
@@ -23,57 +22,50 @@ class Layout extends React.PureComponent {
     componentDidUpdate = () => {
         if (this.props.data) {
             let Notes = this.props.data.ListName;
-            console.log(Notes);
             this.setState({ Notes });
         }
     };
 
     loadNotes = () => {
-        const { Notes, isOldTask } = this.state;
+        const { Notes } = this.state;
         let { isLoading } = this.state;
-        console.log('hi');
         if (!this.props.data) {
             startFetchMyQuery('selectListName').then(res => {
-                res.ListName.map(
-                    element => (Notes.push(element), isOldTask.push(true)),
-                );
+                res.ListName.map(element => Notes.push(element));
                 isLoading = false;
-                this.setState({ Notes, isOldTask, isLoading });
+                this.setState({ Notes, isLoading });
             });
         }
     };
 
     addNote = event => {
-        const { Notes, isOldTask } = this.state;
+        const { Notes } = this.state;
         let { autokey } = this.state;
         let Id = autokey;
         autokey++;
         let ListName = '';
         let Tasks = [];
         Notes.push({ Id, ListName, Tasks });
-        isOldTask.push(false);
-        this.setState({ Notes, isOldTask, autokey });
+        this.setState({ Notes: [...Notes], autokey });
     };
 
     deleteNote = (event, element) => {
-        const { Notes, isOldTask } = this.state;
+        const { Notes } = this.state;
         let index = Notes.indexOf(element);
+        console.log(index);
         if (element.ListName)
             startFetchMyQuery('deleteList', { Id: element.Id });
         Notes.splice(index, 1);
-        isOldTask.splice(index, 1);
         this.setState({
-            Notes,
-            isOldTask,
+            Notes: [...Notes],
         });
     };
 
     updateNoteTitle = (element, newTitle, isNewNote) => {
-        const { Notes, isOldTask } = this.state;
+        const { Notes } = this.state;
         let index = Notes.indexOf(element);
         Notes[index].ListName = newTitle;
-        isOldTask[index] = true;
-        this.setState({ Notes, isOldTask });
+        this.setState({ Notes });
         if (isNewNote) {
             startFetchMyQuery('addList', { ListName: newTitle }).then(res => {
                 Notes[index].Id = res.insert_ListName.returning[0].Id;
@@ -96,7 +88,7 @@ class Layout extends React.PureComponent {
         Notes[index].Tasks.push({ Id: autokey, TaskName: '', Checked: false });
         this.setState({
             autokey,
-            Notes,
+            Notes: [...Notes],
         });
     };
 
@@ -109,7 +101,7 @@ class Layout extends React.PureComponent {
             });
         Notes[index].Tasks.splice(lineIndex, 1);
         this.setState({
-            Notes,
+            Notes: [...Notes],
         });
     };
 
@@ -144,11 +136,11 @@ class Layout extends React.PureComponent {
     };
 
     changeCheckBox = (element, lineIndex) => {
-        const { Notes, isOldTask } = this.state;
+        const { Notes } = this.state;
         let index = Notes.indexOf(element);
-        let c = Notes[index].Tasks[lineIndex].Checked;
         Notes[index].Tasks[lineIndex].Checked =
             !Notes[index].Tasks[lineIndex].Checked;
+        this.setState({ Notes: [...Notes] });
         startFetchMyQuery('changeCheckBox', {
             Id: Notes[index].Tasks[lineIndex].Id,
             Checked: Notes[index].Tasks[lineIndex].Checked,
@@ -156,7 +148,7 @@ class Layout extends React.PureComponent {
     };
 
     render() {
-        const { Notes, isOldTask, isLoading, lim } = this.state;
+        const { Notes, isLoading, lim } = this.state;
         return (
             <div>
                 <header>
@@ -164,47 +156,30 @@ class Layout extends React.PureComponent {
                     <button onClick={event => this.addNote(event)}>Add</button>
                 </header>
                 <main>
-                    {
-                        (console.log('render'),
-                        !isLoading ? (
-                            Notes.map(
-                                element => (
-                                    console.log(element.Tasks),
-                                    (
-                                        <NoteList
-                                            Id={element.Id}
-                                            key={element.ListName + element.Id}
-                                            Tasks={element.Tasks}
-                                            value={element.ListName}
-                                            isOldTask={
-                                                isOldTask[
-                                                    Notes.indexOf(element)
-                                                ]
-                                            }
-                                            onDelete={event =>
-                                                this.deleteNote(event, element)
-                                            }
-                                            updateNoteTitle={
-                                                this.updateNoteTitle
-                                            }
-                                            addLine={event =>
-                                                this.addLine(element)
-                                            }
-                                            deleteLine={this.deleteLine}
-                                            updateLine={this.updateLine}
-                                            changeCheckBox={this.changeCheckBox}
-                                            element={element}
-                                            lim={lim}
-                                        />
-                                    )
-                                ),
-                            )
-                        ) : (
-                            <Popup>
-                                <Spinner />
-                            </Popup>
+                    {!isLoading ? (
+                        Notes.map(element => (
+                            <NoteList
+                                Id={element.Id}
+                                key={element.ListName + element.Id}
+                                Tasks={element.Tasks}
+                                value={element.ListName}
+                                onDelete={event =>
+                                    this.deleteNote(event, element)
+                                }
+                                updateNoteTitle={this.updateNoteTitle}
+                                addLine={event => this.addLine(element)}
+                                deleteLine={this.deleteLine}
+                                updateLine={this.updateLine}
+                                changeCheckBox={this.changeCheckBox}
+                                element={element}
+                                lim={lim}
+                            />
                         ))
-                    }
+                    ) : (
+                        <Popup>
+                            <Spinner />
+                        </Popup>
+                    )}
                 </main>
             </div>
         );
