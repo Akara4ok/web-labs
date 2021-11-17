@@ -10,7 +10,7 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import { HttpLink } from 'apollo-link-http';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import gql from 'graphql-tag';
-import Layout from 'Layout';
+import Layout from '../Components/Layout';
 
 const httpLink = new HttpLink({
     uri: 'https://subtle-dove-32.hasura.app/v1/graphql',
@@ -59,7 +59,26 @@ const tasksSubscriptions = gql`
     }
 `;
 
+let isSkip = false;
+
 export default function LastChanges() {
     const { data, loading } = useSubscription(tasksSubscriptions);
-    return <Layout data={data} />;
+    if (isSkip) {
+        isSkip = false;
+        return (
+            <Layout
+                skipSub={() => {
+                    isSkip = true;
+                }}
+            />
+        );
+    }
+    return (
+        <Layout
+            data={data}
+            skipSub={() => {
+                isSkip = true;
+            }}
+        />
+    );
 }

@@ -1,11 +1,10 @@
 import React from 'react';
 import axios from 'axios';
 import classes from './Layout.scss';
-import NoteList from 'NoteList';
-import startFetchMyQuery from './HasuraRequests';
-//import lastChanges from './HasuraSubscriptions';
-import Popup from './Popup';
-import Spinner from './Spinner';
+import NoteList from './NotesComponent/NoteList';
+import startFetchMyQuery from './../HasuraAPI/HasuraRequests';
+import Popup from './Popup/Popup';
+import Spinner from './Popup/Spinner';
 
 class Layout extends React.PureComponent {
     constructor(props) {
@@ -53,6 +52,8 @@ class Layout extends React.PureComponent {
         const { Notes } = this.state;
         let index = Notes.indexOf(element);
         console.log(index);
+        this.props.skipSub();
+        this.props.skipSub();
         if (element.ListName)
             startFetchMyQuery('deleteList', { Id: element.Id });
         Notes.splice(index, 1);
@@ -66,6 +67,7 @@ class Layout extends React.PureComponent {
         let index = Notes.indexOf(element);
         Notes[index].ListName = newTitle;
         this.setState({ Notes });
+        this.props.skipSub();
         if (isNewNote) {
             startFetchMyQuery('addList', { ListName: newTitle }).then(res => {
                 Notes[index].Id = res.insert_ListName.returning[0].Id;
@@ -95,6 +97,7 @@ class Layout extends React.PureComponent {
     deleteLine = (element, lineIndex) => {
         const { Notes } = this.state;
         let index = Notes.indexOf(element);
+        this.props.skipSub();
         if (element.Tasks[lineIndex].TaskName)
             startFetchMyQuery('deleteLine', {
                 Id: Notes[index].Tasks[lineIndex].Id,
@@ -113,6 +116,7 @@ class Layout extends React.PureComponent {
             TaskName: newLine,
             Checked: Notes[index].Tasks[lineIndex].Checked,
         };
+        this.props.skipSub();
         this.setState({ Notes });
         if (isNewLine) {
             startFetchMyQuery('addLine', {
@@ -141,6 +145,7 @@ class Layout extends React.PureComponent {
         Notes[index].Tasks[lineIndex].Checked =
             !Notes[index].Tasks[lineIndex].Checked;
         this.setState({ Notes: [...Notes] });
+        this.props.skipSub();
         startFetchMyQuery('changeCheckBox', {
             Id: Notes[index].Tasks[lineIndex].Id,
             Checked: Notes[index].Tasks[lineIndex].Checked,

@@ -1,10 +1,8 @@
 import React from 'react';
-import axios from 'axios';
 import classes from './NoteList.scss';
-import NoteLine from 'NoteLine';
-import Button from './Button';
+import NoteLine from './NoteLine';
+import Button from './../Button/Button';
 import { TiPlus } from 'react-icons/Ti';
-import startFetchMyQuery from './HasuraRequests';
 
 class NoteList extends React.PureComponent {
     constructor(props) {
