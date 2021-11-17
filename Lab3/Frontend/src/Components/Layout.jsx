@@ -109,9 +109,12 @@ class Layout extends React.PureComponent {
         });
     };
 
-    updateLine = (element, lineIndex, newLine, isNewLine) => {
+    updateLine = (ListId, LineId, newLine, isNewLine) => {
         const { Notes } = this.state;
-        let index = Notes.indexOf(element);
+        let index = Notes.findIndex(({ Id }) => Id === ListId);
+        let lineIndex = Notes[index].Tasks.findIndex(({ Id }) => Id === LineId);
+        //console.log("index: " + index + " lineIndex: " + lineIndex);
+        console.log(newLine);
         Notes[index].Tasks[lineIndex] = {
             Id: Notes[index].Tasks[lineIndex].Id,
             TaskName: newLine,

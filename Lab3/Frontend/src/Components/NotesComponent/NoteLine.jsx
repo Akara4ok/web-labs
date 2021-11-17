@@ -21,12 +21,6 @@ class NoteLine extends React.PureComponent {
         }
     };
 
-    /*changeCheckBox = () => {
-        let { isTaskDone } = this.state;
-        this.props.changeCheckBox(this.props.element);
-        this.setState({ isTaskDone: !isTaskDone });
-    };*/
-
     render() {
         const { isTaskDone } = this.state;
         let { lastValue, lineValue } = this.state;
@@ -61,11 +55,7 @@ class NoteLine extends React.PureComponent {
                                 return;
                             }
                             lastValue = lineValue;
-                            this.props.updateLine(
-                                this.props.element,
-                                lineValue,
-                                isNewLine,
-                            );
+                            this.props.updateLine(lineValue, isNewLine);
                             this.setState({
                                 lineValue,
                                 lastValue,
