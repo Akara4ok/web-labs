@@ -94,11 +94,12 @@ class Layout extends React.PureComponent {
         });
     };
 
-    deleteLine = (element, lineIndex) => {
+    deleteLine = (ListId, LineId) => {
         const { Notes } = this.state;
-        let index = Notes.indexOf(element);
+        let index = Notes.findIndex(({ Id }) => Id === ListId);
+        let lineIndex = Notes[index].Tasks.findIndex(({ Id }) => Id === LineId);
         this.props.skipSub();
-        if (element.Tasks[lineIndex].TaskName)
+        if (Notes[index].Tasks[lineIndex].TaskName)
             startFetchMyQuery('deleteLine', {
                 Id: Notes[index].Tasks[lineIndex].Id,
             });
@@ -139,9 +140,10 @@ class Layout extends React.PureComponent {
         this.setState({ Notes });
     };
 
-    changeCheckBox = (element, lineIndex) => {
+    changeCheckBox = (ListId, LineId) => {
         const { Notes } = this.state;
-        let index = Notes.indexOf(element);
+        let index = Notes.findIndex(({ Id }) => Id === ListId);
+        let lineIndex = Notes[index].Tasks.findIndex(({ Id }) => Id === LineId);
         Notes[index].Tasks[lineIndex].Checked =
             !Notes[index].Tasks[lineIndex].Checked;
         this.setState({ Notes: [...Notes] });

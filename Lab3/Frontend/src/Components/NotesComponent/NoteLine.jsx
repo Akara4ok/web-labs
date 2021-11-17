@@ -21,11 +21,11 @@ class NoteLine extends React.PureComponent {
         }
     };
 
-    changeCheckBox = () => {
+    /*changeCheckBox = () => {
         let { isTaskDone } = this.state;
         this.props.changeCheckBox(this.props.element);
         this.setState({ isTaskDone: !isTaskDone });
-    };
+    };*/
 
     render() {
         const { isTaskDone } = this.state;
@@ -35,9 +35,11 @@ class NoteLine extends React.PureComponent {
                 <Button onClick={this.props.onDeleteLine}> &#10006; </Button>
                 <label onClick={event => event.preventDefault()}>
                     {isTaskDone ? (
-                        <ImCheckmark onClick={this.changeCheckBox} />
+                        <ImCheckmark onClick={this.props.changeCheckBox} />
                     ) : (
-                        <ImCheckboxUnchecked onClick={this.changeCheckBox} />
+                        <ImCheckboxUnchecked
+                            onClick={this.props.changeCheckBox}
+                        />
                     )}
                     <input
                         className={

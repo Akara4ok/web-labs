@@ -23,23 +23,17 @@ class NoteList extends React.PureComponent {
         }
     };
 
-    deleteLine = (event, element) => {
-        let { Lines } = this.state;
-        let index = Lines.indexOf(element);
-        this.props.deleteLine(this.props.element, index);
-    };
-
     updateLine = (element, newLine, isNewLine) => {
         let { Lines } = this.state;
         let index = Lines.indexOf(element);
         this.props.updateLine(this.props.element, index, newLine, isNewLine);
     };
 
-    changeCheckBox = element => {
+    /*changeCheckBox = element => {
         let { Lines } = this.state;
         let index = Lines.indexOf(element);
         this.props.changeCheckBox(this.props.element, index);
-    };
+    };*/
 
     render() {
         const { Lines, lim, Id } = this.state;
@@ -96,10 +90,13 @@ class NoteList extends React.PureComponent {
                             isChecked={element.Checked}
                             Id={element.Id}
                             onDeleteLine={event =>
-                                this.deleteLine(event, element)
+                                this.props.deleteLine(Id, element.Id)
                             }
                             updateLine={this.updateLine}
-                            changeCheckBox={this.changeCheckBox}
+                            changeCheckBox={this.props.changeCheckBox(
+                                Id,
+                                element.Id,
+                            )}
                             element={element}
                             value={element.TaskName}
                         />
