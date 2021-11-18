@@ -26,6 +26,7 @@
         "max-len": ["error", 80, { "ignoreRegExpLiterals": true }],
         "no-extra-parens": ["error", "all", { "ignoreJSX": "multi-line" }],
         "react/prop-types": 0,
-        "react/destructuring-assignment": [2, "always"]
+        "react/destructuring-assignment": [2, "always"],
+        "import/no-unresolved": [2, { "caseSensitive": false }]
     }
 }
