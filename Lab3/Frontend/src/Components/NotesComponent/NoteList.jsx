@@ -23,12 +23,6 @@ class NoteList extends React.PureComponent {
         }
     };
 
-    /*updateLine = (element, newLine, isNewLine) => {
-        let { Lines } = this.state;
-        let index = Lines.indexOf(element);
-        this.props.updateLine(this.props.element, index, newLine, isNewLine);
-    };*/
-
     render() {
         const { Lines, lim, Id } = this.state;
         let { lastValue, titleName } = this.state;

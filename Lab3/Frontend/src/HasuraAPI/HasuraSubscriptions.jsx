@@ -1,7 +1,7 @@
 import React from 'react';
 import {
     ApolloClient,
-    ApolloLink,
+    ApolloProvider,
     InMemoryCache,
     split,
     useSubscription,
@@ -62,16 +62,10 @@ const tasksSubscriptions = gql`
 let isSkip = false;
 
 export default function LastChanges() {
-    const { data, loading } = useSubscription(tasksSubscriptions);
+    let { data, loading } = useSubscription(tasksSubscriptions);
     if (isSkip) {
         isSkip = false;
-        return (
-            <Layout
-                skipSub={() => {
-                    isSkip = true;
-                }}
-            />
-        );
+        data = null;
     }
     return (
         <Layout
