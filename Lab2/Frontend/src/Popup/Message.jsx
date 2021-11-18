@@ -9,7 +9,6 @@ class Message extends React.Component {
         return (
             <div className={classes.message}>
                 <div
-                    //className={classes.text}
                     className={`${classes.text} ${
                         this.props.className ? classes.success : classes.error
                     }`}>

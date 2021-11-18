@@ -1,12 +1,11 @@
-/*eslint-disable */
 const functions = require('firebase-functions');
-/*eslint-enable */
 const nodemailer = require('nodemailer');
 const sanitizeHtml = require('sanitize-html');
 
+const re =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
 function validateEmail(email) {
-    const re =
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
 }
 
@@ -36,16 +35,14 @@ exports.api = functions.https.onRequest(async (req, res) => {
     let currentIpUser = {};
     const currentTime = new Date();
 
-    currentIpUser = rateLimit.ipData.get(currentIp);
-
-    if (!currentIpUser) {
-        currentIpUser = { count: 0, time: currentTime };
-    }
+    currentIpUser = rateLimit.ipData.get(currentIp) ?? {
+        count: 0,
+        time: currentTime,
+    };
 
     if (
-        currentIpUser.count &&
-        (currentIpUser.count + 1 > rateLimit.ipNumberCalls ||
-            currentTime - currentIpUser.time <= rateLimit.timeSeconds * 1000)
+        currentIpUser.count >= rateLimit.ipNumberCalls ||
+        currentTime - currentIpUser.time <= rateLimit.timeSeconds * 1000
     ) {
         isSuccess = false;
         messages.push('Too many requests. Please try later');
@@ -88,7 +85,6 @@ exports.api = functions.https.onRequest(async (req, res) => {
         from: `${req.body.name} <${functions.config().email.address}>`,
         to: `${req.body.email}`,
         subject: 'Hello',
-        text: 'Hello world?',
         html: output,
     });
     messages.push('Your message was successfully sent');
