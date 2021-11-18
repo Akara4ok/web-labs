@@ -32,17 +32,17 @@ exports.api = functions.https.onRequest(async (req, res) => {
     const messages = [];
     let isSuccess = [];
     const currentIp = req.headers['fastly-client-ip'];
-    let currentIpUser = {};
     const currentTime = new Date();
 
-    currentIpUser = rateLimit.ipData.get(currentIp) ?? {
+    const currentIpUser = rateLimit.ipData.get(currentIp) ?? {
         count: 0,
         time: currentTime,
     };
 
     if (
-        currentIpUser.count >= rateLimit.ipNumberCalls ||
-        currentTime - currentIpUser.time <= rateLimit.timeSeconds * 1000
+        currentIpUser.count &&
+        (currentIpUser.count >= rateLimit.ipNumberCalls ||
+            currentTime - currentIpUser.time <= rateLimit.timeSeconds * 1000)
     ) {
         isSuccess = false;
         messages.push('Too many requests. Please try later');
