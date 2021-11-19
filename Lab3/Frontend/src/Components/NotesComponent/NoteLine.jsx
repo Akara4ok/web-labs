@@ -8,25 +8,23 @@ class NoteLine extends React.PureComponent {
         super(props);
         this.state = {
             Id: this.props.Id,
-            lastValue: this.props.value,
+            lastName: this.props.value,
             isTaskDone: this.props.isChecked,
-            lineValue: this.props.value,
+            taskName: this.props.value,
         };
     }
 
     componentDidUpdate = () => {
-        if (this.props.isChecked !== undefined) {
-            let isTaskDone = this.props.isChecked;
-            this.setState({ isTaskDone });
-        }
+        let isTaskDone = this.props.isChecked;
+        this.setState({ isTaskDone });
     };
 
     render() {
         const { isTaskDone } = this.state;
-        let { lastValue, lineValue } = this.state;
+        let { lastName, taskName } = this.state;
         return (
             <div className={classes.container}>
-                <Button onClick={this.props.onDeleteLine}> &#10006; </Button>
+                <Button onClick={this.props.deleteTask}> &#10006; </Button>
                 <label onClick={event => event.preventDefault()}>
                     {isTaskDone ? (
                         <ImCheckmark onClick={this.props.changeCheckBox} />
@@ -39,34 +37,34 @@ class NoteLine extends React.PureComponent {
                         className={
                             isTaskDone ? classes.isNotDone : classes.isDone
                         }
-                        onBlur={event => {
+                        onBlur={() => {
                             let isNewLine = false;
-                            if (!lastValue) isNewLine = true;
-                            if (!lineValue) {
-                                if (!lastValue) {
-                                    this.props.onDeleteLine();
+                            if (!lastName) isNewLine = true;
+                            if (!taskName) {
+                                if (!lastName) {
+                                    this.props.deleteTask();
                                     return;
                                 }
-                                lineValue = lastValue;
+                                taskName = lastName;
                                 this.setState({
-                                    lineValue,
-                                    lastValue,
+                                    taskName,
+                                    lastName,
                                 });
                                 return;
                             }
-                            lastValue = lineValue;
-                            this.props.updateLine(lineValue, isNewLine);
+                            lastName = taskName;
+                            this.props.updateTask(taskName, isNewLine);
                             this.setState({
-                                lineValue,
-                                lastValue,
+                                taskName,
+                                lastName,
                             });
                         }}
                         onChange={event => {
-                            lineValue = event.target.value;
-                            this.setState({ lineValue });
+                            taskName = event.target.value;
+                            this.setState({ taskName });
                         }}
-                        value={lineValue}
-                        autoFocus={!lineValue}
+                        value={taskName}
+                        autoFocus={!taskName}
                         maxLength="30"
                     />
                 </label>

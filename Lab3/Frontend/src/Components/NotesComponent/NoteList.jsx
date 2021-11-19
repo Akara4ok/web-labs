@@ -9,59 +9,57 @@ class NoteList extends React.PureComponent {
         super(props);
         this.state = {
             Id: this.props.Id,
-            Lines: this.props.Tasks,
+            Tasks: this.props.Tasks,
             lim: this.props.lim,
             titleName: this.props.value,
-            lastValue: this.props.value,
+            lastName: this.props.value,
         };
     }
 
     componentDidUpdate = () => {
-        if (this.props.Tasks) {
-            let Lines = this.props.Tasks;
-            this.setState({ Lines });
-        }
+        let Tasks = this.props.Tasks;
+        this.setState({ Tasks });
     };
 
     render() {
-        const { Lines, lim, Id } = this.state;
-        let { lastValue, titleName } = this.state;
+        const { Tasks, lim, Id } = this.state;
+        let { lastName, titleName } = this.state;
         return (
             <div>
                 <div className={classes.note}>
                     <div className={classes.line}>
-                        <Button onClick={this.props.onDelete}>
+                        <Button onClick={this.props.deleteNote}>
                             {' '}
                             &#10006;{' '}
                         </Button>
                     </div>
                     <input
                         className={classes.noteHead}
-                        onBlur={event => {
+                        onBlur={() => {
                             let isNewNote = false;
-                            if (!lastValue) isNewNote = true;
+                            if (!lastName) isNewNote = true;
                             if (!titleName) {
-                                if (!lastValue) {
-                                    this.props.onDelete();
+                                if (!lastName) {
+                                    this.props.deleteNote();
                                     return;
                                 }
-                                titleName = lastValue;
+                                titleName = lastName;
                                 this.setState({
                                     titleName,
-                                    lastValue,
+                                    lastName,
                                 });
                                 return;
                             }
-                            lastValue = titleName;
+                            lastName = titleName;
                             this.props.updateNoteTitle(
-                                this.props.element,
+                                Id,
                                 titleName,
                                 isNewNote,
                             );
 
                             this.setState({
                                 titleName,
-                                lastValue,
+                                lastName,
                             });
                         }}
                         onChange={event => {
@@ -72,32 +70,31 @@ class NoteList extends React.PureComponent {
                         autoFocus={!titleName}
                         maxLength="10"
                     />
-                    {Lines.map(element => (
+                    {Tasks.map(element => (
                         <NoteLine
                             key={element.TaskName + element.Id}
                             isChecked={element.Checked}
                             Id={element.Id}
-                            onDeleteLine={event =>
-                                this.props.deleteLine(Id, element.Id)
+                            deleteTask={() =>
+                                this.props.deleteTask(Id, element.Id)
                             }
-                            updateLine={(newLine, isNewLine) =>
-                                this.props.updateLine(
+                            updateTask={(newTaskName, isNewTask) =>
+                                this.props.updateTask(
                                     Id,
                                     element.Id,
-                                    newLine,
-                                    isNewLine,
+                                    newTaskName,
+                                    isNewTask,
                                 )
                             }
-                            changeCheckBox={event =>
+                            changeCheckBox={() =>
                                 this.props.changeCheckBox(Id, element.Id)
                             }
-                            element={element}
                             value={element.TaskName}
                         />
                     ))}
-                    {Lines.length !== lim ? (
+                    {Tasks.length !== lim ? (
                         <Button
-                            onClick={this.props.addLine}
+                            onClick={this.props.addTask}
                             className={classes.pushButton}>
                             {' '}
                             <TiPlus />{' '}

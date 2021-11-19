@@ -30,6 +30,7 @@ class Layout extends React.PureComponent {
         let { isLoading } = this.state;
         if (!this.props.data) {
             startFetchMyQuery('selectListName').then(res => {
+                this.props.skipSub();
                 res.ListName.map(element => Notes.push(element));
                 isLoading = false;
                 this.setState({ Notes, isLoading });
@@ -37,7 +38,7 @@ class Layout extends React.PureComponent {
         }
     };
 
-    addNote = event => {
+    addNote = () => {
         const { Notes } = this.state;
         let { autokey } = this.state;
         let Id = autokey;
@@ -48,11 +49,10 @@ class Layout extends React.PureComponent {
         this.setState({ Notes: [...Notes], autokey });
     };
 
-    deleteNote = (event, element) => {
+    deleteNote = element => {
         const { Notes } = this.state;
         let index = Notes.indexOf(element);
         console.log(index);
-        this.props.skipSub();
         this.props.skipSub();
         if (element.ListName)
             startFetchMyQuery('deleteList', { Id: element.Id });
@@ -62,11 +62,10 @@ class Layout extends React.PureComponent {
         });
     };
 
-    updateNoteTitle = (element, newTitle, isNewNote) => {
+    updateNoteTitle = (ListId, newTitle, isNewNote) => {
         const { Notes } = this.state;
-        let index = Notes.indexOf(element);
+        let index = Notes.findIndex(({ Id }) => Id === ListId);
         Notes[index].ListName = newTitle;
-        this.setState({ Notes });
         this.props.skipSub();
         if (isNewNote) {
             startFetchMyQuery('addList', { ListName: newTitle }).then(res => {
@@ -82,7 +81,7 @@ class Layout extends React.PureComponent {
         this.setState({ Notes });
     };
 
-    addLine = element => {
+    addTask = element => {
         const { Notes } = this.state;
         let { autokey } = this.state;
         autokey++;
@@ -94,42 +93,40 @@ class Layout extends React.PureComponent {
         });
     };
 
-    deleteLine = (ListId, LineId) => {
+    deleteTask = (ListId, TaskId) => {
         const { Notes } = this.state;
         let index = Notes.findIndex(({ Id }) => Id === ListId);
-        let lineIndex = Notes[index].Tasks.findIndex(({ Id }) => Id === LineId);
+        let taskIndex = Notes[index].Tasks.findIndex(({ Id }) => Id === TaskId);
         this.props.skipSub();
-        if (Notes[index].Tasks[lineIndex].TaskName)
+        if (Notes[index].Tasks[taskIndex].TaskName)
             startFetchMyQuery('deleteLine', {
-                Id: Notes[index].Tasks[lineIndex].Id,
+                Id: Notes[index].Tasks[taskIndex].Id,
             });
-        Notes[index].Tasks.splice(lineIndex, 1);
+        Notes[index].Tasks.splice(taskIndex, 1);
         this.setState({
             Notes: [...Notes],
         });
     };
 
-    updateLine = (ListId, LineId, newLine, isNewLine) => {
+    updateTask = (ListId, TaskId, newTaskName, isNewTask) => {
         const { Notes } = this.state;
         let index = Notes.findIndex(({ Id }) => Id === ListId);
-        let lineIndex = Notes[index].Tasks.findIndex(({ Id }) => Id === LineId);
-        //console.log("index: " + index + " lineIndex: " + lineIndex);
-        console.log(newLine);
-        Notes[index].Tasks[lineIndex] = {
-            Id: Notes[index].Tasks[lineIndex].Id,
-            TaskName: newLine,
-            Checked: Notes[index].Tasks[lineIndex].Checked,
+        let taskIndex = Notes[index].Tasks.findIndex(({ Id }) => Id === TaskId);
+        Notes[index].Tasks[taskIndex] = {
+            Id: Notes[index].Tasks[taskIndex].Id,
+            TaskName: newTaskName,
+            Checked: Notes[index].Tasks[taskIndex].Checked,
         };
         this.props.skipSub();
         this.setState({ Notes });
-        if (isNewLine) {
+        if (isNewTask) {
             startFetchMyQuery('addLine', {
                 IdList: Notes[index].Id,
-                TaskName: newLine,
+                TaskName: newTaskName,
             }).then(res => {
-                Notes[index].Tasks[lineIndex] = {
+                Notes[index].Tasks[taskIndex] = {
                     Id: res.insert_Tasks.returning[0].Id,
-                    TaskName: newLine,
+                    TaskName: newTaskName,
                     Checked: false,
                 };
                 this.setState({ Notes });
@@ -137,23 +134,23 @@ class Layout extends React.PureComponent {
             return;
         }
         startFetchMyQuery('changeLine', {
-            Id: Notes[index].Tasks[lineIndex].Id,
-            TaskName: newLine,
+            Id: Notes[index].Tasks[taskIndex].Id,
+            TaskName: newTaskName,
         });
         this.setState({ Notes });
     };
 
-    changeCheckBox = (ListId, LineId) => {
+    changeCheckBox = (ListId, TaskId) => {
         const { Notes } = this.state;
         let index = Notes.findIndex(({ Id }) => Id === ListId);
-        let lineIndex = Notes[index].Tasks.findIndex(({ Id }) => Id === LineId);
-        Notes[index].Tasks[lineIndex].Checked =
-            !Notes[index].Tasks[lineIndex].Checked;
+        let taskIndex = Notes[index].Tasks.findIndex(({ Id }) => Id === TaskId);
+        Notes[index].Tasks[taskIndex].Checked =
+            !Notes[index].Tasks[taskIndex].Checked;
         this.setState({ Notes: [...Notes] });
         this.props.skipSub();
         startFetchMyQuery('changeCheckBox', {
-            Id: Notes[index].Tasks[lineIndex].Id,
-            Checked: Notes[index].Tasks[lineIndex].Checked,
+            Id: Notes[index].Tasks[taskIndex].Id,
+            Checked: Notes[index].Tasks[taskIndex].Checked,
         });
     };
 
@@ -163,7 +160,7 @@ class Layout extends React.PureComponent {
             <div>
                 <header>
                     <h1>Notes</h1>
-                    <button onClick={event => this.addNote(event)}>Add</button>
+                    <button onClick={() => this.addNote()}>Add</button>
                 </header>
                 <main>
                     {!isLoading ? (
@@ -173,15 +170,12 @@ class Layout extends React.PureComponent {
                                 key={element.ListName + element.Id}
                                 Tasks={element.Tasks}
                                 value={element.ListName}
-                                onDelete={event =>
-                                    this.deleteNote(event, element)
-                                }
+                                deleteNote={() => this.deleteNote(element)}
                                 updateNoteTitle={this.updateNoteTitle}
-                                addLine={event => this.addLine(element)}
-                                deleteLine={this.deleteLine}
-                                updateLine={this.updateLine}
+                                addTask={() => this.addTask(element)}
+                                deleteTask={this.deleteTask}
+                                updateTask={this.updateTask}
                                 changeCheckBox={this.changeCheckBox}
-                                element={element}
                                 lim={lim}
                             />
                         ))
