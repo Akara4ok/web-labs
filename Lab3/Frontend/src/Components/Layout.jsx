@@ -5,6 +5,7 @@ import NoteList from './NotesComponent/NoteList';
 import startFetchMyQuery from './../HasuraAPI/HasuraRequests';
 import Popup from './Popup/Popup';
 import Spinner from './Popup/Spinner';
+import Message from './Popup/Message';
 
 class Layout extends React.PureComponent {
     constructor(props) {
@@ -14,6 +15,8 @@ class Layout extends React.PureComponent {
             Notes: [],
             isLoading: true,
             lim: 5,
+            requestStatus: 200,
+            errorMessage: '',
         };
         this.loadNotes();
     }
@@ -26,12 +29,16 @@ class Layout extends React.PureComponent {
     };
 
     loadNotes = () => {
-        const { Notes } = this.state;
+        const Notes = [];
         let { isLoading } = this.state;
         if (!this.props.data) {
             startFetchMyQuery('selectListName').then(res => {
+                if (res[0]?.message) {
+                    this.exceptionHandling(res[0]);
+                    return;
+                }
                 this.props.skipSub();
-                res.ListName.map(element => Notes.push(element));
+                res?.ListName.map(element => Notes.push(element));
                 isLoading = false;
                 this.setState({ Notes, isLoading });
             });
@@ -52,10 +59,14 @@ class Layout extends React.PureComponent {
     deleteNote = element => {
         const { Notes } = this.state;
         let index = Notes.indexOf(element);
-        console.log(index);
         this.props.skipSub();
         if (element.ListName)
-            startFetchMyQuery('deleteList', { Id: element.Id });
+            startFetchMyQuery('deleteList', { Id: element.Id }).then(res => {
+                if (res[0]?.message) {
+                    this.exceptionHandling(res[0]);
+                    return;
+                }
+            });
         Notes.splice(index, 1);
         this.setState({
             Notes: [...Notes],
@@ -69,6 +80,10 @@ class Layout extends React.PureComponent {
         this.props.skipSub();
         if (isNewNote) {
             startFetchMyQuery('addList', { ListName: newTitle }).then(res => {
+                if (res[0]?.message) {
+                    this.exceptionHandling(res[0]);
+                    return;
+                }
                 Notes[index].Id = res.insert_ListName.returning[0].Id;
                 this.setState({ Notes });
             });
@@ -77,6 +92,11 @@ class Layout extends React.PureComponent {
         startFetchMyQuery('changeListName', {
             Id: Notes[index].Id,
             ListName: newTitle,
+        }).then(res => {
+            if (res[0]?.message) {
+                this.exceptionHandling(res[0]);
+                return;
+            }
         });
         this.setState({ Notes });
     };
@@ -101,6 +121,11 @@ class Layout extends React.PureComponent {
         if (Notes[index].Tasks[taskIndex].TaskName)
             startFetchMyQuery('deleteLine', {
                 Id: Notes[index].Tasks[taskIndex].Id,
+            }).then(res => {
+                if (res[0]?.message) {
+                    this.exceptionHandling(res[0]);
+                    return;
+                }
             });
         Notes[index].Tasks.splice(taskIndex, 1);
         this.setState({
@@ -124,6 +149,10 @@ class Layout extends React.PureComponent {
                 IdList: Notes[index].Id,
                 TaskName: newTaskName,
             }).then(res => {
+                if (res[0]?.message) {
+                    this.exceptionHandling(res[0]);
+                    return;
+                }
                 Notes[index].Tasks[taskIndex] = {
                     Id: res.insert_Tasks.returning[0].Id,
                     TaskName: newTaskName,
@@ -136,6 +165,11 @@ class Layout extends React.PureComponent {
         startFetchMyQuery('changeLine', {
             Id: Notes[index].Tasks[taskIndex].Id,
             TaskName: newTaskName,
+        }).then(res => {
+            if (res[0]?.message) {
+                this.exceptionHandling(res[0]);
+                return;
+            }
         });
         this.setState({ Notes });
     };
@@ -151,11 +185,40 @@ class Layout extends React.PureComponent {
         startFetchMyQuery('changeCheckBox', {
             Id: Notes[index].Tasks[taskIndex].Id,
             Checked: Notes[index].Tasks[taskIndex].Checked,
+        }).then(res => {
+            if (res[0]?.message) {
+                this.exceptionHandling(res[0]);
+                return;
+            }
         });
     };
 
+    exceptionHandling = errors => {
+        if (
+            !errors ||
+            errors?.message !==
+                'hasura cloud limit of 60 requests/minute exceeded'
+        ) {
+            this.setState({
+                requestStatus: 500,
+                errorMessage: 'Something went wrong...',
+            });
+            return;
+        }
+        this.setState({
+            requestStatus: 429,
+            errorMessage: errors.message,
+        });
+    };
+
+    onOkClicked = () => {
+        this.setState({ requestStatus: 200, errorMessage: '' });
+        this.loadNotes();
+    };
+
     render() {
-        const { Notes, isLoading, lim } = this.state;
+        const { Notes, isLoading, lim, requestStatus, errorMessage } =
+            this.state;
         return (
             <div>
                 <header>
@@ -185,6 +248,13 @@ class Layout extends React.PureComponent {
                         </Popup>
                     )}
                 </main>
+                {requestStatus !== 200 ? (
+                    <Popup>
+                        <Message onClose={this.onOkClicked}>
+                            {errorMessage}
+                        </Message>
+                    </Popup>
+                ) : null}
             </div>
         );
     }
