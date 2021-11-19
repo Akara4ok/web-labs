@@ -15,30 +15,30 @@ const rateLimit = {
     ipData: new Map(),
 };
 
+const mailData = functions.config()?.email;
+
 const transporter = nodemailer.createTransport({
-    host: functions.config().email.host,
-    port: functions.config().email.port,
+    host: mailData?.host,
+    port: mailData?.port,
     secure: false,
     auth: {
-        user: functions.config().email.address,
-        pass: functions.config().email.pass,
+        user: mailData?.address,
+        pass: mailData?.pass,
     },
     tls: {
         rejectUnauthorized: false,
     },
 });
 
-exports.api = functions.https.onRequest(async (req, res) => {
+exports.api = functions.https.onRequest((req, res) => {
     const messages = [];
-    let isSuccess = [];
+    let isSuccess = true;
     const currentIp = req.headers['fastly-client-ip'];
     const currentTime = new Date();
-
     const currentIpUser = rateLimit.ipData.get(currentIp) ?? {
         count: 0,
         time: currentTime,
     };
-
     if (
         currentIpUser.count &&
         (currentIpUser.count >= rateLimit.ipNumberCalls ||
@@ -52,11 +52,16 @@ exports.api = functions.https.onRequest(async (req, res) => {
         });
         return;
     }
-
     currentIpUser.count += 1;
     currentIpUser.time = new Date();
     rateLimit.ipData.set(currentIp, currentIpUser);
-
+    if (!mailData) {
+        res.status(500).json({
+            isSuccess,
+            messages,
+        });
+        return;
+    }
     const cleanMessage = sanitizeHtml(req.body.message);
     isSuccess = true;
     if (!req.body.name) {
@@ -78,18 +83,26 @@ exports.api = functions.https.onRequest(async (req, res) => {
         });
         return;
     }
-
     const output = `<p>${cleanMessage}</p>`;
 
-    await transporter.sendMail({
-        from: `${req.body.name} <${functions.config().email.address}>`,
-        to: `${req.body.email}`,
-        subject: 'Hello',
-        html: output,
-    });
-    messages.push('Your message was successfully sent');
-    res.json({
-        isSuccess,
-        messages,
-    });
+    transporter
+        .sendMail({
+            from: `${req.body.name} <${functions.config().email.address}>`,
+            to: `${req.body.email}`,
+            subject: 'Hello',
+            html: output,
+        })
+        .then(() => {
+            messages.push('Your message was successfully sent');
+            res.json({
+                isSuccess,
+                messages,
+            });
+        })
+        .catch(() => {
+            res.status(500).json({
+                isSuccess,
+                messages,
+            });
+        });
 });
