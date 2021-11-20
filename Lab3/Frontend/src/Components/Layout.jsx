@@ -1,5 +1,4 @@
 import React from 'react';
-import axios from 'axios';
 import classes from './Layout.scss';
 import NoteList from './NotesComponent/NoteList';
 import startFetchMyQuery from './../HasuraAPI/HasuraRequests';
