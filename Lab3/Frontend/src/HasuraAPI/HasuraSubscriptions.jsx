@@ -10,20 +10,20 @@ import { HttpLink } from 'apollo-link-http';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import gql from 'graphql-tag';
 import Layout from '../Components/Layout';
+import { config } from './config.js';
 
 const httpLink = new HttpLink({
-    uri: 'https://subtle-dove-32.hasura.app/v1/graphql',
+    uri: `https://${config['link']}`,
 });
 
 const wsLink = new WebSocketLink({
-    uri: 'wss://subtle-dove-32.hasura.app/v1/graphql',
+    uri: `wss://${config['link']}`,
     options: {
         reconnect: true,
         connectionParams: {
             headers: {
                 'content-type': 'application/json',
-                'x-hasura-admin-secret':
-                    'SYfy99PqMy0EFUZ2evxFbwe4Q77eIeTdP5tibLRz2M0R1ZMjc8zrc0BEoUl1nm4M',
+                'x-hasura-admin-secret': `${config['password']}`,
             },
         },
     },

@@ -1,9 +1,10 @@
+import { config } from './config.js';
+
 async function fetchGraphQL(operationsDoc, operationName, variables) {
-    const result = await fetch('https://subtle-dove-32.hasura.app/v1/graphql', {
+    const result = await fetch(`https://${config['link']}`, {
         headers: {
             'content-type': 'application/json',
-            'x-hasura-admin-secret':
-                'SYfy99PqMy0EFUZ2evxFbwe4Q77eIeTdP5tibLRz2M0R1ZMjc8zrc0BEoUl1nm4M',
+            'x-hasura-admin-secret': `${config['password']}`,
         },
         method: 'POST',
         body: JSON.stringify({
@@ -84,7 +85,6 @@ export default async function startFetchMyQuery(requst, variables) {
     const { errors, data } = await fetchMyQuery(requst, variables);
 
     if (errors) {
-        console.error(errors);
         return errors;
     }
     return data;
