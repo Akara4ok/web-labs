@@ -1,7 +1,7 @@
 import React from 'react';
 import classes from './NoteLine.scss';
 import Button from './../Button/Button';
-import { ImCheckboxUnchecked, ImCheckmark } from 'react-icons/Im';
+import { ImCheckboxUnchecked, ImCheckmark } from 'react-icons/im';
 
 class NoteLine extends React.PureComponent {
     constructor(props) {

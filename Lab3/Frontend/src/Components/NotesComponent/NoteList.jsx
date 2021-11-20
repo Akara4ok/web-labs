@@ -2,7 +2,7 @@ import React from 'react';
 import classes from './NoteList.scss';
 import NoteLine from './NoteLine';
 import Button from './../Button/Button';
-import { TiPlus } from 'react-icons/Ti';
+import { TiPlus } from 'react-icons/ti';
 
 class NoteList extends React.PureComponent {
     constructor(props) {
