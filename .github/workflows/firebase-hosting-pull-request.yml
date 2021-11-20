@@ -19,3 +19,4 @@ jobs:
                   repoToken: '${{ secrets.GITHUB_TOKEN }}'
                   firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_NOTES_ECBA8 }}'
                   projectId: notes-ecba8
+                  channelId: live
