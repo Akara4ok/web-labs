@@ -30,7 +30,7 @@ class Layout extends React.PureComponent {
 
     loadNotes = () => {
         const Notes = [];
-        let { isLoading } = this.state;
+        this.setState({ isLoading: true });
         if (!this.props.data) {
             startFetchMyQuery('selectListName').then(res => {
                 if (res[0]?.message) {
@@ -39,8 +39,7 @@ class Layout extends React.PureComponent {
                 }
                 this.props.skipSub();
                 res?.ListName.map(element => Notes.push(element));
-                isLoading = false;
-                this.setState({ Notes, isLoading });
+                this.setState({ Notes, isLoading: false });
             });
         }
     };
@@ -79,7 +78,9 @@ class Layout extends React.PureComponent {
         Notes[index].ListName = newTitle;
         this.props.skipSub();
         if (isNewNote) {
+            this.setState({ isLoading: true });
             startFetchMyQuery('addList', { ListName: newTitle }).then(res => {
+                this.setState({ isLoading: false });
                 if (res[0]?.message) {
                     this.exceptionHandling(res[0]);
                     return;
@@ -226,27 +227,26 @@ class Layout extends React.PureComponent {
                     <button onClick={() => this.addNote()}>Add</button>
                 </header>
                 <main>
-                    {!isLoading ? (
-                        Notes.map(element => (
-                            <NoteList
-                                Id={element.Id}
-                                key={element.ListName + element.Id}
-                                Tasks={element.Tasks}
-                                value={element.ListName}
-                                deleteNote={() => this.deleteNote(element)}
-                                updateNoteTitle={this.updateNoteTitle}
-                                addTask={() => this.addTask(element)}
-                                deleteTask={this.deleteTask}
-                                updateTask={this.updateTask}
-                                changeCheckBox={this.changeCheckBox}
-                                lim={lim}
-                            />
-                        ))
-                    ) : (
+                    {Notes.map(element => (
+                        <NoteList
+                            Id={element.Id}
+                            key={element.ListName + element.Id}
+                            Tasks={element.Tasks}
+                            value={element.ListName}
+                            deleteNote={() => this.deleteNote(element)}
+                            updateNoteTitle={this.updateNoteTitle}
+                            addTask={() => this.addTask(element)}
+                            deleteTask={this.deleteTask}
+                            updateTask={this.updateTask}
+                            changeCheckBox={this.changeCheckBox}
+                            lim={lim}
+                        />
+                    ))}
+                    {isLoading ? (
                         <Popup>
                             <Spinner />
                         </Popup>
-                    )}
+                    ) : null}
                 </main>
                 {requestStatus !== 200 ? (
                     <Popup>
