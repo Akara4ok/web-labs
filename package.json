@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
+    "module": "module.js",
     "scripts": {
         "lint": "eslint . --ignore-path .gitignore --no-error-on-unmatched-pattern",
         "lint:fix": "eslint . --fix --ignore-path .gitignore",
@@ -40,6 +41,7 @@
         "husky": "^7.0.4",
         "postcss-loader": "^6.1.1",
         "prettier": "2.4.0",
+        "react-scripts": "^4.0.3",
         "sass": "^1.42.1",
         "sass-loader": "^12.1.0",
         "style-loader": "^3.3.0",

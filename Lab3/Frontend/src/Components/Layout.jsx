@@ -28,6 +28,7 @@ class Layout extends React.PureComponent {
     };
 
     loadNotes = () => {
+        console.log(process.env.REACT_APP_HASURA_PASSWORD);
         const Notes = [];
         this.setState({ isLoading: true });
         if (!this.props.data) {
