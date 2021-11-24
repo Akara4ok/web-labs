@@ -13,8 +13,8 @@
         "lint:style:fix": "npm run lint:style --ignore-path .gitignore -- --fix",
         "prepare": "husky install",
         "sass": "sass .",
-        "build": "webpack --config webpack.config.js --mode production",
-        "start": "webpack-dev-server --hot --open --mode development"
+        "build": "webpack --env --config webpack.config.js --mode production",
+        "start": "webpack-dev-server --env --hot --open --mode development"
     },
     "author": "",
     "license": "ISC",
