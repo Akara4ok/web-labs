@@ -2,6 +2,9 @@
 # https://github.com/firebase/firebase-tools
 
 name: Deploy to Firebase Hosting on PR
+env:
+    CI: true
+    API_KEY: ${{ secrets.API_KEY }}
 'on': pull_request
 jobs:
     build_and_preview:
@@ -13,11 +16,7 @@ jobs:
               with:
                   node-version: '16'
                   cache: 'npm'
-            - run: npm ci
-            - run: npm run build --ci --silent --testPathIgnorePatterns=experimental
-              env:
-                  CI: true
-                  API_KEY: ${{ secrets.API_KEY }}
+            - run: npm ci && npm run build
             - uses: FirebaseExtended/action-hosting-deploy@v0
               with:
                   repoToken: '${{ secrets.GITHUB_TOKEN }}'
