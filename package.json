@@ -41,6 +41,7 @@
         "husky": "^7.0.4",
         "postcss-loader": "^6.1.1",
         "prettier": "2.4.0",
+        "react-app-env": "^1.2.3",
         "react-scripts": "^4.0.3",
         "sass": "^1.42.1",
         "sass-loader": "^12.1.0",
