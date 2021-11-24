@@ -13,7 +13,6 @@ jobs:
               with:
                   node-version: '16'
                   cache: 'npm'
-            - name: Run Tests (JEST)
             - run: yarn test --ci --silent --testPathIgnorePatterns=experimental
               env:
                   CI: true
