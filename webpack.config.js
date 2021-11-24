@@ -12,7 +12,9 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: './Lab3/Frontend/src/index.html',
         }),
-        new Dotenv(),
+        new Dotenv({
+            systemvars: true,
+        }),
     ],
     resolve: {
         modules: [__dirname, 'src', 'node_modules'],
