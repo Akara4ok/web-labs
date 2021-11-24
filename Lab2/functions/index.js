@@ -32,7 +32,6 @@ const transporter = nodemailer.createTransport({
 
 exports.api = functions.https.onRequest((req, res) => {
     const messages = [];
-    let isSuccess = true;
     const currentIp = req.headers['fastly-client-ip'];
     const currentTime = new Date();
     const currentIpUser = rateLimit.ipData.get(currentIp) ?? {
@@ -40,68 +39,57 @@ exports.api = functions.https.onRequest((req, res) => {
         time: currentTime,
     };
     if (
-        currentIpUser.count &&
-        (currentIpUser.count >= rateLimit.ipNumberCalls ||
-            currentTime - currentIpUser.time <= rateLimit.timeSeconds * 1000)
+        currentTime !== currentIpUser?.time &&
+        (currentIpUser?.count ||
+            0 >= rateLimit.ipNumberCalls ||
+            currentTime - currentIpUser?.time <= rateLimit.timeSeconds * 1000)
     ) {
-        isSuccess = false;
         messages.push('Too many requests. Please try later');
-        res.status(429).json({
-            isSuccess,
+        return res.status(429).json({
             messages,
         });
-        return;
     }
     currentIpUser.count += 1;
     currentIpUser.time = new Date();
     rateLimit.ipData.set(currentIp, currentIpUser);
     if (!mailData) {
-        res.status(500).json({
-            isSuccess,
+        return res.status(500).json({
             messages,
         });
-        return;
     }
     const cleanMessage = sanitizeHtml(req.body.message);
-    isSuccess = true;
     if (!req.body.name) {
         messages.push('Enter correct name');
-        isSuccess = false;
     }
     if (!validateEmail(req.body.email)) {
         messages.push('Enter correct e-mail');
-        isSuccess = false;
     }
     if (!cleanMessage) {
         messages.push('Enter correct message');
-        isSuccess = false;
     }
-    if (!isSuccess) {
-        res.json({
-            isSuccess,
+    if (messages.length) {
+        return res.status(500).json({
             messages,
         });
-        return;
     }
     const output = `<p>${cleanMessage}</p>`;
 
-    transporter
+    return transporter
         .sendMail({
-            from: `${req.body.name} <${functions.config().email.address}>`,
+            from: `${req.body.name} <${mailData?.address}>`,
             to: `${req.body.email}`,
             subject: 'Hello',
             html: output,
         })
         .then(() => {
             messages.push('Your message was successfully sent');
-            res.json({
-                isSuccess,
+            return res.json({
                 messages,
             });
         })
         .catch(() => {
-            res.status(500).json({
-                isSuccess,
+            messages.push('Something went wrong');
+            return res.status(500).json({
                 messages,
             });
         });

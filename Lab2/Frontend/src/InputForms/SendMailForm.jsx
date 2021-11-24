@@ -24,16 +24,7 @@ class SendMailForm extends React.Component {
 
     handleSubmit = event => {
         event.preventDefault();
-        const {
-            isRequest,
-            messages,
-            isSuccess,
-            isPopupOnScreen,
-            isRateLimit,
-            name,
-            email,
-            message,
-        } = this.state;
+        const { name, email, message } = this.state;
         this.setState({ isRequest: true });
         this.setState({ isPopupOnScreen: true });
         axios
@@ -46,13 +37,11 @@ class SendMailForm extends React.Component {
                 this.setState({
                     messages: res.data.messages,
                     isRequest: false,
-                    isSuccess: res.data.isSuccess,
+                    isSuccess: true,
                     name: '',
                     email: '',
                     message: '',
                 });
-
-                console.log(res.data.isSuccess);
             })
             .catch(error => {
                 this.setState({
@@ -60,17 +49,16 @@ class SendMailForm extends React.Component {
                     isSuccess: false,
                 });
 
-                if (!error.response.data || error.response.status !== 429) {
+                if (!error.response.data) {
                     this.setState({
                         messages: ['Something went wrong...'],
                     });
                     return;
                 }
+
                 this.setState({
                     messages: error.response.data.messages,
                 });
-                console.log(this.state.messages);
-                console.log('Hi');
             });
     };
 
