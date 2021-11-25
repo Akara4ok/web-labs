@@ -28,7 +28,6 @@ class Layout extends React.PureComponent {
     };
 
     loadNotes = () => {
-        console.log(process.env.API_KEY);
         const Notes = [];
         this.setState({ isLoading: true });
         if (!this.props.data) {
