@@ -1,9 +1,9 @@
 import React from 'react';
-import './Spinner.css';
+import classes from './Spinner.scss';
 
 function Spinner() {
     return (
-        <div className="lds-default">
+        <div className={classes['lds-default']}>
             <div></div>
             <div></div>
             <div></div>
