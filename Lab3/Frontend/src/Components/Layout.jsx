@@ -194,27 +194,34 @@ class Layout extends React.PureComponent {
     };
 
     exceptionHandling = errors => {
-        if (
-            !errors ||
-            errors?.message !==
-                'hasura cloud limit of 60 requests/minute exceeded'
-        ) {
+        if (!errors) {
             this.setState({
                 requestStatus: 500,
                 errorMessage: 'Something went wrong...',
             });
             return;
         }
+        if (
+            errors?.message ===
+            'hasura cloud limit of 60 requests/minute exceeded'
+        ) {
+            this.setState({
+                requestStatus: 429,
+                errorMessage: errors.message,
+            });
+            return;
+        }
         this.setState({
-            requestStatus: 429,
-            errorMessage: errors.message,
+            requestStatus: 500,
+            errorMessage: 'Something went wrong...',
         });
+        return;
     };
 
     onOkClicked = () => {
         const { requestStatus } = this.state;
         this.setState({ requestStatus: 200, errorMessage: '' });
-        this.loadNotes();
+        if (requestStatus !== 200) this.loadNotes();
     };
 
     render() {
