@@ -1,7 +1,4 @@
 name: Deploy to Firebase Hosting on PR
-env:
-    CI: true
-    API_KEY: ${{ secrets.API_KEY }}
 'on': pull_request
 jobs:
     build_and_preview:
@@ -14,6 +11,9 @@ jobs:
                   node-version: '16'
                   cache: 'npm'
             - run: npm ci && npm run build
+              env:
+                  CI: true
+                  API_KEY: ${{ secrets.API_KEY }}
             - uses: FirebaseExtended/action-hosting-deploy@v0
               with:
                   repoToken: '${{ secrets.GITHUB_TOKEN }}'
