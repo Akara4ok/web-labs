@@ -39,8 +39,6 @@ class NoteLine extends React.PureComponent {
                         }
                         onBlur={() =>
                             this.props.updateString(
-                                lastName,
-                                currentName,
                                 this.props.deleteTask,
                                 this.props.updateTask,
                                 this.state,

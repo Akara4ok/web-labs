@@ -21,7 +21,8 @@ class NoteList extends React.PureComponent {
         this.setState({ Tasks });
     };
 
-    updateString = (lastName, currentName, deleteItem, update, state) => {
+    updateString = (deleteItem, update, state) => {
+        let { lastName, currentName } = state;
         let isNewLine = !lastName;
         if (!currentName && !lastName) {
             deleteItem();
@@ -52,8 +53,6 @@ class NoteList extends React.PureComponent {
                         className={classes.noteHead}
                         onBlur={() =>
                             this.updateString(
-                                lastName,
-                                currentName,
                                 this.props.deleteNote,
                                 this.props.updateNoteTitle,
                                 this.state,
