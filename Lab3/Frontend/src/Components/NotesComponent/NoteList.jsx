@@ -11,7 +11,7 @@ class NoteList extends React.PureComponent {
             Id: this.props.Id,
             Tasks: this.props.Tasks,
             lim: this.props.lim,
-            titleName: this.props.value,
+            currentName: this.props.value,
             lastName: this.props.value,
         };
     }
@@ -21,9 +21,24 @@ class NoteList extends React.PureComponent {
         this.setState({ Tasks });
     };
 
+    updateString = (lastName, currentName, deleteItem, update, state) => {
+        let isNewLine = !lastName;
+        if (!currentName && !lastName) {
+            deleteItem();
+            return;
+        }
+        if (!currentName) {
+            state.currentName = lastName;
+            this.forceUpdate();
+            return;
+        }
+        state.lastName = currentName;
+        update(currentName, isNewLine);
+    };
+
     render() {
         const { Tasks, lim, Id } = this.state;
-        let { lastName, titleName } = this.state;
+        let { lastName, currentName } = this.state;
         return (
             <div>
                 <div className={classes.note}>
@@ -35,39 +50,21 @@ class NoteList extends React.PureComponent {
                     </div>
                     <input
                         className={classes.noteHead}
-                        onBlur={() => {
-                            let isNewNote = false;
-                            if (!lastName) isNewNote = true;
-                            if (!titleName) {
-                                if (!lastName) {
-                                    this.props.deleteNote();
-                                    return;
-                                }
-                                titleName = lastName;
-                                this.setState({
-                                    titleName,
-                                    lastName,
-                                });
-                                return;
-                            }
-                            lastName = titleName;
-                            this.props.updateNoteTitle(
-                                Id,
-                                titleName,
-                                isNewNote,
-                            );
-
-                            this.setState({
-                                titleName,
+                        onBlur={() =>
+                            this.updateString(
                                 lastName,
-                            });
-                        }}
+                                currentName,
+                                this.props.deleteNote,
+                                this.props.updateNoteTitle,
+                                this.state,
+                            )
+                        }
                         onChange={event => {
-                            titleName = event.target.value;
-                            this.setState({ titleName });
+                            currentName = event.target.value;
+                            this.setState({ currentName });
                         }}
-                        value={titleName}
-                        autoFocus={!titleName}
+                        value={currentName}
+                        autoFocus={!currentName}
                         maxLength="10"
                     />
                     {Tasks.map(element => (
@@ -86,6 +83,7 @@ class NoteList extends React.PureComponent {
                                     isNewTask,
                                 )
                             }
+                            updateString={this.updateString}
                             changeCheckBox={() =>
                                 this.props.changeCheckBox(Id, element.Id)
                             }

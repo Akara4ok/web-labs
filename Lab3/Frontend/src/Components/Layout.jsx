@@ -241,7 +241,13 @@ class Layout extends React.PureComponent {
                             Tasks={element.Tasks}
                             value={element.ListName}
                             deleteNote={() => this.deleteNote(element)}
-                            updateNoteTitle={this.updateNoteTitle}
+                            updateNoteTitle={(newTitle, isNewNote) =>
+                                this.updateNoteTitle(
+                                    element.Id,
+                                    newTitle,
+                                    isNewNote,
+                                )
+                            }
                             addTask={() => this.addTask(element)}
                             deleteTask={this.deleteTask}
                             updateTask={this.updateTask}
