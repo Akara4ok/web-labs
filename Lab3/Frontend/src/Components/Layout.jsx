@@ -214,7 +214,7 @@ class Layout extends React.PureComponent {
     onOkClicked = () => {
         const { requestStatus } = this.state;
         this.setState({ requestStatus: 200, errorMessage: '' });
-        if (requestStatus !== 429) this.loadNotes();
+        this.loadNotes();
     };
 
     render() {
