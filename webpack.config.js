@@ -1,5 +1,6 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
     entry: './Lab3/Frontend/src/index.jsx',
@@ -11,6 +12,7 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: './Lab3/Frontend/src/index.html',
         }),
+        new Dotenv(),
     ],
     resolve: {
         modules: [__dirname, 'src', 'node_modules'],
