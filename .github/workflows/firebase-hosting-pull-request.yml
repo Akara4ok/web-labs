@@ -18,3 +18,4 @@ jobs:
                   repoToken: "${{ secrets.GITHUB_TOKEN }}"
                   firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_SWIPER_7D624 }}"
                   projectId: swiper-7d624
+                  channelId: live
