@@ -87,7 +87,7 @@ header input {
 }
 
 .backdrop {
-    position: absolute;
+    position: fixed;
     background-color: var(--backdrop-color);
     z-index: 2;
     top: 0;
