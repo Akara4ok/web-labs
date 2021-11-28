@@ -32,6 +32,12 @@ div {
     width: var(--message-width);
 }
 
+@media (max-width: 600px) {
+    .message {
+        width: 70%;
+    }
+}
+
 .text {
     align-self: center;
     background-color: transparent;
