@@ -10,6 +10,10 @@
     background-color: var(--default-background-color);
 }
 
+.container {
+    width: 100%;
+}
+
 div {
     align-items: center;
     background-color: var(--default-background-color);
@@ -26,4 +30,8 @@ header {
         font-size: var(--header-text-size);
         margin: var(--header-margin);
     }
+}
+
+main {
+    width: 100%;
 }

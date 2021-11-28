@@ -9,6 +9,13 @@
 form {
     display: flex;
     flex-direction: column;
+    width: auto;
+}
+
+@media (max-width: 600px) {
+    form {
+        width: 90%;
+    }
 }
 
 .button {

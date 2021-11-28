@@ -31,7 +31,7 @@ const transporter = nodemailer.createTransport({
 });
 
 exports.api = functions.https.onRequest((req, res) => {
-    const messages = [];
+    const errorMessages = [];
     const currentIp = req.headers['fastly-client-ip'];
     const currentTime = new Date();
     const currentIpUser = rateLimit.ipData.get(currentIp) ?? {
@@ -44,32 +44,32 @@ exports.api = functions.https.onRequest((req, res) => {
             0 >= rateLimit.ipNumberCalls ||
             currentTime - currentIpUser?.time <= rateLimit.timeSeconds * 1000)
     ) {
-        messages.push('Too many requests. Please try later');
+        errorMessages.push('Too many requests. Please try later');
         return res.status(429).json({
-            messages,
+            errorMessages,
         });
     }
-    currentIpUser.count += 1;
+    currentIpUser.count++;
     currentIpUser.time = new Date();
     rateLimit.ipData.set(currentIp, currentIpUser);
     if (!mailData) {
         return res.status(500).json({
-            messages,
+            errorMessages,
         });
     }
     const cleanMessage = sanitizeHtml(req.body.message);
     if (!req.body.name) {
-        messages.push('Enter correct name');
+        errorMessages.push('Enter correct name');
     }
     if (!validateEmail(req.body.email)) {
-        messages.push('Enter correct e-mail');
+        errorMessages.push('Enter correct e-mail');
     }
     if (!cleanMessage) {
-        messages.push('Enter correct message');
+        errorMessages.push('Enter correct message');
     }
-    if (messages.length) {
+    if (errorMessages.length) {
         return res.status(500).json({
-            messages,
+            errorMessages,
         });
     }
     const output = `<p>${cleanMessage}</p>`;
@@ -82,15 +82,15 @@ exports.api = functions.https.onRequest((req, res) => {
             html: output,
         })
         .then(() => {
-            messages.push('Your message was successfully sent');
+            errorMessages.push('Your message was successfully sent');
             return res.json({
-                messages,
+                errorMessages,
             });
         })
         .catch(() => {
-            messages.push('Something went wrong');
+            errorMessages.push('Something went wrong');
             return res.status(500).json({
-                messages,
+                errorMessages,
             });
         });
 });

@@ -5,7 +5,7 @@ import SendMailForm from './InputForms/SendMailForm';
 
 function App() {
     return (
-        <div class="container">
+        <div className={classes.container}>
             <header>
                 <h1>Send email</h1>
             </header>

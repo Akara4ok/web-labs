@@ -39,6 +39,13 @@ textarea {
     width: var(--input-width);
 }
 
+@media (max-width: 600px) {
+    input,
+    textarea {
+        width: 80%;
+    }
+}
+
 textarea {
     min-height: var(--text-area-height);
     min-width: var(--input-height);

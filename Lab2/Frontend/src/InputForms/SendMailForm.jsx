@@ -12,7 +12,7 @@ class SendMailForm extends React.Component {
         super(props);
         this.state = {
             isRequest: false,
-            messages: [],
+            errorMessages: [],
             isSuccess: false,
             isPopupOnScreen: false,
             isRateLimit: false,
@@ -35,7 +35,7 @@ class SendMailForm extends React.Component {
             })
             .then(res => {
                 this.setState({
-                    messages: res.data.messages,
+                    errorMessages: res.data.errorMessages,
                     isRequest: false,
                     isSuccess: true,
                     name: '',
@@ -51,13 +51,13 @@ class SendMailForm extends React.Component {
 
                 if (!error.response.data) {
                     this.setState({
-                        messages: ['Something went wrong...'],
+                        errorMessages: ['Something went wrong...'],
                     });
                     return;
                 }
 
                 this.setState({
-                    messages: error.response.data.messages,
+                    errorMessages: error.response.data.errorMessages,
                 });
             });
     };
@@ -71,7 +71,7 @@ class SendMailForm extends React.Component {
 
         return (
             <div>
-                <form method="POST" onSubmit={this.handleSubmit}>
+                <form onSubmit={this.handleSubmit}>
                     <InputField
                         label="Name: "
                         type="text"
@@ -113,7 +113,7 @@ class SendMailForm extends React.Component {
                             <Message
                                 className={this.state.isSuccess}
                                 onClose={this.onOkClicked}>
-                                {this.state.messages.map(element => (
+                                {this.state.errorMessages.map(element => (
                                     <div>{element}</div>
                                 ))}
                             </Message>
