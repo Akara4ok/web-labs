@@ -99,10 +99,15 @@ header input {
 
 @media (max-width: 600px) {
     header {
+        position: sticky;
+        z-index: 3;
+        top: 0px;
         display: block;
         padding: 0px;
+        border-width: 0px;
     }
     .burger-container {
+        border: 1px solid var(--header-border-bottom-color);
         margin: 0px;
         display: flex;
         flex-direction: row;
