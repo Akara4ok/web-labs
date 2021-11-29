@@ -38,10 +38,10 @@ exports.api = functions.https.onRequest((req, res) => {
         count: 0,
         time: currentTime,
     };
+
     if (
         currentTime !== currentIpUser?.time &&
-        (currentIpUser?.count ||
-            0 >= rateLimit.ipNumberCalls ||
+        (currentIpUser?.count >= rateLimit.ipNumberCalls ||
             currentTime - currentIpUser?.time <= rateLimit.timeSeconds * 1000)
     ) {
         errorMessages.push('Too many requests. Please try later');

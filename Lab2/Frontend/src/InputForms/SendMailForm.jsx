@@ -49,15 +49,16 @@ class SendMailForm extends React.Component {
                     isSuccess: false,
                 });
 
-                if (!error.response.data) {
+                if (!error?.response?.data) {
                     this.setState({
                         errorMessages: ['Something went wrong...'],
                     });
                     return;
                 }
-
                 this.setState({
-                    errorMessages: error.response.data.errorMessages,
+                    errorMessages: error.response.data.errorMessages ?? [
+                        'Something went wrong...',
+                    ],
                 });
             });
     };
