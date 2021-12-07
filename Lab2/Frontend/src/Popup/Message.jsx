@@ -10,7 +10,8 @@ class Message extends React.Component {
             <div className={classes.message}>
                 <div
                     className={`${classes.text} ${
-                        this.props.className ? classes.success : classes.error
+                        !this.props.isSuccess ? classes.error : null
+                    }
                     }`}>
                     {this.props.children}
                 </div>

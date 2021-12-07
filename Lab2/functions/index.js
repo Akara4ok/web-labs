@@ -44,9 +44,9 @@ exports.api = functions.https.onRequest((req, res) => {
         (currentIpUser?.count >= rateLimit.ipNumberCalls ||
             currentTime - currentIpUser?.time <= rateLimit.timeSeconds * 1000)
     ) {
-        errorMessages.push('Too many requests. Please try later');
+        errorMessages.push({ message: 'Too many requests. Please try later' });
         return res.status(429).json({
-            errorMessages,
+            errors: errorMessages,
         });
     }
     currentIpUser.count++;
@@ -54,22 +54,22 @@ exports.api = functions.https.onRequest((req, res) => {
     rateLimit.ipData.set(currentIp, currentIpUser);
     if (!mailData) {
         return res.status(500).json({
-            errorMessages,
+            errors: errorMessages,
         });
     }
     const cleanMessage = sanitizeHtml(req.body.message);
     if (!req.body.name) {
-        errorMessages.push('Enter correct name');
+        errorMessages.push({ message: 'Enter correct name' });
     }
     if (!validateEmail(req.body.email)) {
-        errorMessages.push('Enter correct e-mail');
+        errorMessages.push({ message: 'Enter correct e-mail' });
     }
     if (!cleanMessage) {
-        errorMessages.push('Enter correct message');
+        errorMessages.push({ message: 'Enter correct message' });
     }
     if (errorMessages.length) {
         return res.status(500).json({
-            errorMessages,
+            errors: errorMessages,
         });
     }
     const output = `<p>${cleanMessage}</p>`;
@@ -82,15 +82,17 @@ exports.api = functions.https.onRequest((req, res) => {
             html: output,
         })
         .then(() => {
-            errorMessages.push('Your message was successfully sent');
+            errorMessages.push({
+                message: 'Your message was successfully sent',
+            });
             return res.json({
-                errorMessages,
+                data: errorMessages,
             });
         })
         .catch(() => {
-            errorMessages.push('Something went wrong');
+            errorMessages.push({ message: 'Something went wrong' });
             return res.status(500).json({
-                errorMessages,
+                errors: errorMessages,
             });
         });
 });

@@ -41,6 +41,7 @@ div {
 .text {
     align-self: center;
     background-color: transparent;
+    color: var(--messsage-color);
     font-size: var(--message-text-size);
     margin-top: var(--message-text-margin-top);
 }
@@ -65,8 +66,4 @@ div {
 
 .error {
     color: var(--error-color);
-}
-
-.success {
-    color: var(--messsage-color);
 }

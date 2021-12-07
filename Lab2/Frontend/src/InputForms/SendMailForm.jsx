@@ -12,7 +12,7 @@ class SendMailForm extends React.Component {
         super(props);
         this.state = {
             isRequest: false,
-            errorMessages: [],
+            popupMessages: [],
             isSuccess: false,
             isPopupOnScreen: false,
             isRateLimit: false,
@@ -35,7 +35,7 @@ class SendMailForm extends React.Component {
             })
             .then(res => {
                 this.setState({
-                    errorMessages: res.data.errorMessages,
+                    popupMessages: res?.data?.data,
                     isRequest: false,
                     isSuccess: true,
                     name: '',
@@ -48,16 +48,9 @@ class SendMailForm extends React.Component {
                     isRequest: false,
                     isSuccess: false,
                 });
-
-                if (!error?.response?.data) {
-                    this.setState({
-                        errorMessages: ['Something went wrong...'],
-                    });
-                    return;
-                }
                 this.setState({
-                    errorMessages: error.response.data.errorMessages ?? [
-                        'Something went wrong...',
+                    popupMessages: error?.response?.data?.errors ?? [
+                        { message: 'Something went wrong...' },
                     ],
                 });
             });
@@ -112,10 +105,12 @@ class SendMailForm extends React.Component {
                             <Spinner />
                         ) : (
                             <Message
-                                className={this.state.isSuccess}
+                                isSuccess={this.state.isSuccess}
                                 onClose={this.onOkClicked}>
-                                {this.state.errorMessages.map(element => (
-                                    <div>{element}</div>
+                                {this.state.popupMessages.map(element => (
+                                    <div key={element.message}>
+                                        {element.message}
+                                    </div>
                                 ))}
                             </Message>
                         )}
