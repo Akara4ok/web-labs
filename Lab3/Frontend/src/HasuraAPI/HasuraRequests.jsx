@@ -1,7 +1,7 @@
 import { config } from './config.js';
 
-async function fetchGraphQL(operationsDoc, operationName, variables) {
-    const result = await fetch(`https://${config['link']}`, {
+function fetchGraphQL(operationsDoc, operationName, variables) {
+    return fetch(`https://${config['link']}`, {
         headers: {
             'content-type': 'application/json',
             'x-hasura-admin-secret': `${config['password']}`,
@@ -12,9 +12,7 @@ async function fetchGraphQL(operationsDoc, operationName, variables) {
             variables: variables,
             operationName: operationName,
         }),
-    });
-
-    return await result.json();
+    }).then(response => response.json());
 }
 
 const operationsDoc = `
@@ -81,11 +79,15 @@ function fetchMyQuery(requst, variables) {
     return fetchGraphQL(operationsDoc, requst, variables);
 }
 
-export default async function startFetchMyQuery(requst, variables) {
-    const { errors, data } = await fetchMyQuery(requst, variables);
-
-    if (errors) {
-        return errors;
-    }
-    return data;
+export default function startFetchMyQuery(requst, variables) {
+    return fetchMyQuery(requst, variables).then(({ data, errors }) => {
+        console.log(data);
+        console.log(errors);
+        if (errors) {
+            return errors;
+        }
+        if (data) {
+            return data;
+        }
+    });
 }

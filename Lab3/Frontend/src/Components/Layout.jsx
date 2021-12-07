@@ -17,8 +17,11 @@ class Layout extends React.PureComponent {
             requestStatus: 200,
             errorMessage: '',
         };
-        this.loadNotes();
     }
+
+    componentDidMount = () => {
+        this.loadNotes();
+    };
 
     componentDidUpdate = () => {
         if (this.props.data) {
