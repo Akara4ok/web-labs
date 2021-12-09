@@ -14,7 +14,6 @@
         "prepare": "husky install",
         "sass": "sass .",
         "start": "webpack-dev-server --hot --open --mode development",
-        "express": "node functions/index.js",
         "build": "webpack --config webpack.config.js --mode production"
     },
     "author": "",
