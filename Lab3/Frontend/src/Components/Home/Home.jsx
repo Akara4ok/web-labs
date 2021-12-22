@@ -1,12 +1,12 @@
 import React from 'react';
-import classes from './Layout.scss';
-import NoteList from './NotesComponent/NoteList';
-import startFetchMyQuery from './../HasuraAPI/HasuraRequests';
-import Popup from './Popup/Popup';
-import Spinner from './Popup/Spinner';
-import Message from './Popup/Message';
+import classes from './Home.scss';
+import NoteList from '../NotesComponent/NoteList';
+import startFetchMyQuery from '../../HasuraAPI/HasuraRequests';
+import Popup from '../Popup/Popup';
+import Spinner from '../Popup/Spinner';
+import Message from '../Popup/Message';
 
-class Layout extends React.PureComponent {
+class Home extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -49,6 +49,7 @@ class Layout extends React.PureComponent {
     };
 
     addNote = () => {
+        console.log('Hi');
         const { Notes } = this.state;
         let { autokey } = this.state;
         let Id = autokey;
@@ -248,10 +249,6 @@ class Layout extends React.PureComponent {
             this.state;
         return (
             <div>
-                <header>
-                    <h1>Notes</h1>
-                    <button onClick={() => this.addNote()}>Add</button>
-                </header>
                 <main>
                     {Notes.map(element => (
                         <NoteList
@@ -292,4 +289,4 @@ class Layout extends React.PureComponent {
     }
 }
 
-export default Layout;
+export default Home;

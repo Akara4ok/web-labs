@@ -1,0 +1,19 @@
+.buttonContainer {
+    display: flex;
+    gap: 10px;
+    position: absolute;
+    right: 10px;
+    button {
+        background-color: var(--header-button-background-color);
+        border: 0;
+        border-radius: 12px;
+        box-sizing: border-box;
+        color: var(--header-button-text-color);
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        padding: 10px 15px;
+        text-align: center;
+        width: 150px;
+    }
+}

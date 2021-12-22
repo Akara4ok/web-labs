@@ -9,8 +9,9 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import { HttpLink } from 'apollo-link-http';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import gql from 'graphql-tag';
-import Layout from '../Components/Layout';
+import Home from '../Components/Home/Home';
 import { config } from './config.js';
+import Layout from '../Components/Layout/Layout';
 
 const httpLink = new HttpLink({
     uri: `https://${config['link']}`,
@@ -67,11 +68,13 @@ export default function LastChanges() {
         data = null;
     }
     return (
-        <Layout
-            data={data}
-            skipSub={() => {
-                isSkip = true;
-            }}
-        />
+        <>
+            <Layout
+                data={data}
+                skipSub={() => {
+                    isSkip = true;
+                }}
+            />
+        </>
     );
 }
