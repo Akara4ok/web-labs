@@ -7,6 +7,7 @@ import Button from '../Button/Button';
 import classes from './Layout.scss';
 import Home from '../Home/Home';
 import Popup from '../Popup/Popup';
+import Message from '../Popup/Message';
 import Spinner from '../Popup/Spinner';
 
 class Layout extends React.PureComponent {
@@ -19,6 +20,7 @@ class Layout extends React.PureComponent {
             authState: {},
             provider: '',
             isLoading: false,
+            isError: false,
         };
         this.myRef = React.createRef();
     }
@@ -39,7 +41,8 @@ class Layout extends React.PureComponent {
                 const idTokenResult = await user.getIdTokenResult();
                 const hasuraClaim =
                     idTokenResult.claims['https://hasura.io/jwt/claims'];
-
+                this.props.authState.token = token;
+                this.props.authState.user = user;
                 if (hasuraClaim) {
                     this.setState({ authState: { status: 'in', user, token } });
                 } else {
@@ -69,7 +72,7 @@ class Layout extends React.PureComponent {
             await firebase.auth().signInWithPopup(provider);
             this.setState({ isLoading: false });
         } catch (error) {
-            console.log(error);
+            this.setState({ isLoading: false, isError: true });
         }
     };
 
@@ -80,7 +83,7 @@ class Layout extends React.PureComponent {
             await firebase.auth().signOut();
             this.setState({ isLoading: false });
         } catch (error) {
-            console.log(error);
+            this.setState({ isLoading: false, isError: true });
         }
     };
 
@@ -92,7 +95,7 @@ class Layout extends React.PureComponent {
     };
 
     render() {
-        const { authState, isLoading } = this.state;
+        const { authState, isLoading, isError } = this.state;
         return (
             <>
                 {isLoading ? (
@@ -118,13 +121,22 @@ class Layout extends React.PureComponent {
                         )}
                     </div>
                 </header>
-                {authState?.status === 'out' ? null : (
+                {authState?.status === 'in' ? (
                     <Home
+                        authState={authState}
                         data={this.props.data}
                         skipSub={this.props.skipSub}
                         ref={this.myRef}
                     />
-                )}
+                ) : null}
+                {isError ? (
+                    <Popup>
+                        <Message
+                            onClose={() => this.setState({ isError: false })}>
+                            <div>Something went wrong</div>
+                        </Message>
+                    </Popup>
+                ) : null}
             </>
         );
     }

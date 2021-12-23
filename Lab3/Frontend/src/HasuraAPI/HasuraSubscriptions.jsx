@@ -12,6 +12,11 @@ import gql from 'graphql-tag';
 import Home from '../Components/Home/Home';
 import { config } from './config.js';
 import Layout from '../Components/Layout/Layout';
+import { setContext } from '@apollo/client/link/context';
+
+let isSkip = false;
+let authState = { token: '' };
+let headers;
 
 const httpLink = new HttpLink({
     uri: `https://${config['link']}`,
@@ -21,13 +26,16 @@ const wsLink = new WebSocketLink({
     uri: `wss://${config['link']}`,
     options: {
         reconnect: true,
-        connectionParams: {
-            headers: {
-                'content-type': 'application/json',
-                'x-hasura-admin-secret': `${config['password']}`,
-            },
-        },
     },
+});
+
+const authLink = setContext((_, { headers }) => {
+    return {
+        headers: {
+            ...headers,
+            Authorization: `Bearer ${authState?.token}`,
+        },
+    };
 });
 
 const link = split(
@@ -36,7 +44,7 @@ const link = split(
         return kind === 'OperationDefinition' && operation === 'subscription';
     },
     wsLink,
-    httpLink,
+    authLink.concat(httpLink),
 );
 
 export const apolloClient = new ApolloClient({
@@ -59,10 +67,11 @@ const tasksSubscriptions = gql`
     }
 `;
 
-let isSkip = false;
-
 export default function LastChanges() {
-    let { data } = useSubscription(tasksSubscriptions);
+    let { data } = useSubscription(tasksSubscriptions, {
+        UserId: authState?.user?.uid,
+    });
+    console.log('dsvsfz');
     if (isSkip) {
         isSkip = false;
         data = null;
@@ -70,6 +79,7 @@ export default function LastChanges() {
     return (
         <>
             <Layout
+                authState={authState}
                 data={data}
                 skipSub={() => {
                     isSkip = true;

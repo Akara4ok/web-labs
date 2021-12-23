@@ -1,11 +1,12 @@
 import { config } from './config.js';
 
+let authState = {};
+let isIn;
+let headers;
+
 function fetchGraphQL(operationsDoc, operationName, variables) {
     return fetch(`https://${config['link']}`, {
-        headers: {
-            'content-type': 'application/json',
-            'x-hasura-admin-secret': `${config['password']}`,
-        },
+        headers,
         method: 'POST',
         body: JSON.stringify({
             query: operationsDoc,
@@ -79,10 +80,14 @@ function fetchMyQuery(requst, variables) {
     return fetchGraphQL(operationsDoc, requst, variables);
 }
 
-export default function startFetchMyQuery(requst, variables) {
+export default function startFetchMyQuery(requst, variables, authState) {
+    isIn = authState?.status === 'in';
+    headers = isIn
+        ? {
+              Authorization: `Bearer ${authState?.token}`,
+          }
+        : {};
     return fetchMyQuery(requst, variables).then(({ data, errors }) => {
-        console.log(data);
-        console.log(errors);
         if (errors) {
             return errors;
         }

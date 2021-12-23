@@ -33,8 +33,9 @@ class Home extends React.PureComponent {
     loadNotes = () => {
         const Notes = [];
         this.setState({ isLoading: true });
+
         if (!this.props.data) {
-            startFetchMyQuery('selectListName')
+            startFetchMyQuery('selectListName', {}, this.props.authState)
                 .then(res => {
                     if (res[0]?.message) {
                         this.exceptionHandling(res[0]);
@@ -49,7 +50,6 @@ class Home extends React.PureComponent {
     };
 
     addNote = () => {
-        console.log('Hi');
         const { Notes } = this.state;
         let { autokey } = this.state;
         let Id = autokey;
@@ -65,7 +65,11 @@ class Home extends React.PureComponent {
         let index = Notes.indexOf(element);
         this.props.skipSub();
         if (element.ListName)
-            startFetchMyQuery('deleteList', { Id: element.Id })
+            startFetchMyQuery(
+                'deleteList',
+                { Id: element.Id },
+                this.props.authState,
+            )
                 .then(res => {
                     if (res[0]?.message) {
                         this.exceptionHandling(res[0]);
@@ -86,7 +90,11 @@ class Home extends React.PureComponent {
         this.props.skipSub();
         if (isNewNote) {
             this.setState({ isLoading: true });
-            startFetchMyQuery('addList', { ListName: newTitle })
+            startFetchMyQuery(
+                'addList',
+                { ListName: newTitle },
+                this.props.authState,
+            )
                 .then(res => {
                     this.setState({ isLoading: false });
                     if (res[0]?.message) {
@@ -99,10 +107,14 @@ class Home extends React.PureComponent {
                 .catch(() => this.exceptionHandling());
             return;
         }
-        startFetchMyQuery('changeListName', {
-            Id: Notes[index].Id,
-            ListName: newTitle,
-        })
+        startFetchMyQuery(
+            'changeListName',
+            {
+                Id: Notes[index].Id,
+                ListName: newTitle,
+            },
+            this.props.authState,
+        )
             .then(res => {
                 if (res[0]?.message) {
                     this.exceptionHandling(res[0]);
@@ -122,7 +134,7 @@ class Home extends React.PureComponent {
         this.setState({
             autokey,
             Notes: [...Notes],
-        }).catch(() => this.exceptionHandling());
+        });
     };
 
     deleteTask = (ListId, TaskId) => {
@@ -131,9 +143,13 @@ class Home extends React.PureComponent {
         let taskIndex = Notes[index].Tasks.findIndex(({ Id }) => Id === TaskId);
         this.props.skipSub();
         if (Notes[index].Tasks[taskIndex].TaskName)
-            startFetchMyQuery('deleteLine', {
-                Id: Notes[index].Tasks[taskIndex].Id,
-            })
+            startFetchMyQuery(
+                'deleteLine',
+                {
+                    Id: Notes[index].Tasks[taskIndex].Id,
+                },
+                this.props.authState,
+            )
                 .then(res => {
                     if (res[0]?.message) {
                         this.exceptionHandling(res[0]);
@@ -159,11 +175,17 @@ class Home extends React.PureComponent {
         this.props.skipSub();
         this.setState({ Notes });
         if (isNewTask) {
-            startFetchMyQuery('addLine', {
-                IdList: Notes[index].Id,
-                TaskName: newTaskName,
-            })
+            this.setState({ isLoading: true });
+            startFetchMyQuery(
+                'addLine',
+                {
+                    IdList: Notes[index].Id,
+                    TaskName: newTaskName,
+                },
+                this.props.authState,
+            )
                 .then(res => {
+                    this.setState({ isLoading: false });
                     if (res[0]?.message) {
                         this.exceptionHandling(res[0]);
                         return;
@@ -173,15 +195,19 @@ class Home extends React.PureComponent {
                         TaskName: newTaskName,
                         Checked: false,
                     };
-                    this.setState({ Notes });
+                    this.setState({ Notes: [...Notes] });
                 })
                 .catch(() => this.exceptionHandling());
             return;
         }
-        startFetchMyQuery('changeLine', {
-            Id: Notes[index].Tasks[taskIndex].Id,
-            TaskName: newTaskName,
-        })
+        startFetchMyQuery(
+            'changeLine',
+            {
+                Id: Notes[index].Tasks[taskIndex].Id,
+                TaskName: newTaskName,
+            },
+            this.props.authState,
+        )
             .then(res => {
                 if (res[0]?.message) {
                     this.exceptionHandling(res[0]);
@@ -200,10 +226,14 @@ class Home extends React.PureComponent {
             !Notes[index].Tasks[taskIndex].Checked;
         this.setState({ Notes: [...Notes] });
         this.props.skipSub();
-        startFetchMyQuery('changeCheckBox', {
-            Id: Notes[index].Tasks[taskIndex].Id,
-            Checked: Notes[index].Tasks[taskIndex].Checked,
-        })
+        startFetchMyQuery(
+            'changeCheckBox',
+            {
+                Id: Notes[index].Tasks[taskIndex].Id,
+                Checked: Notes[index].Tasks[taskIndex].Checked,
+            },
+            this.props.authState,
+        )
             .then(res => {
                 if (res[0]?.message) {
                     this.exceptionHandling(res[0]);
