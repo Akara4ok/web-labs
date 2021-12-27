@@ -43,7 +43,7 @@ const link = split(
         return kind === 'OperationDefinition' && operation === 'subscription';
     },
     wsLink,
-    authLink.concat(httpLink)
+    authLink.concat(httpLink),
 );
 
 export const apolloClient = new ApolloClient({
