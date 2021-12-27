@@ -16,7 +16,6 @@ import { setContext } from '@apollo/client/link/context';
 
 let isSkip = false;
 let authState = { token: '' };
-let headers;
 
 const httpLink = new HttpLink({
     uri: `https://${config['link']}`,
@@ -44,7 +43,7 @@ const link = split(
         return kind === 'OperationDefinition' && operation === 'subscription';
     },
     wsLink,
-    authLink.concat(httpLink),
+    authLink.concat(httpLink)
 );
 
 export const apolloClient = new ApolloClient({
@@ -68,10 +67,9 @@ const tasksSubscriptions = gql`
 `;
 
 export default function LastChanges() {
-    let { data } = useSubscription(tasksSubscriptions, {
-        UserId: authState?.user?.uid,
-    });
-    console.log('dsvsfz');
+    let { data } = useSubscription(tasksSubscriptions);
+    console.log(authState);
+    console.log(data);
     if (isSkip) {
         isSkip = false;
         data = null;
