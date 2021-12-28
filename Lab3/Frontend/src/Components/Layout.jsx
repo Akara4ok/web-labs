@@ -121,7 +121,7 @@ class Layout extends React.PureComponent {
         this.setState({
             autokey,
             Notes: [...Notes],
-        }).catch(() => this.exceptionHandling());
+        });
     };
 
     deleteTask = (ListId, TaskId) => {

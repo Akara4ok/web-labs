@@ -81,8 +81,6 @@ function fetchMyQuery(requst, variables) {
 
 export default function startFetchMyQuery(requst, variables) {
     return fetchMyQuery(requst, variables).then(({ data, errors }) => {
-        console.log(data);
-        console.log(errors);
         if (errors) {
             return errors;
         }
