@@ -14,21 +14,27 @@ const rateLimit = {
     timeSeconds: 30,
     ipData: new Map(),
 };
-
+let isTransporterFailed = false;
 const mailData = functions.config()?.email;
 
-const transporter = nodemailer.createTransport({
-    host: mailData?.host,
-    port: mailData?.port,
-    secure: false,
-    auth: {
-        user: mailData?.address,
-        pass: mailData?.pass,
-    },
-    tls: {
-        rejectUnauthorized: false,
-    },
-});
+let transporter;
+
+try {
+    transporter = nodemailer.createTransport({
+        host: mailData?.host,
+        port: mailData?.port,
+        secure: false,
+        auth: {
+            user: mailData?.address,
+            pass: mailData?.pass,
+        },
+        tls: {
+            rejectUnauthorized: false,
+        },
+    });
+} catch {
+    isTransporterFailed = true;
+}
 
 exports.api = functions.https.onRequest((req, res) => {
     const errorMessages = [];
@@ -38,6 +44,13 @@ exports.api = functions.https.onRequest((req, res) => {
         count: 0,
         time: currentTime,
     };
+
+    if (isTransporterFailed) {
+        errorMessages.push({ message: 'Something went wrong' });
+        return res.status(500).json({
+            errors: errorMessages,
+        });
+    }
 
     if (
         currentTime !== currentIpUser?.time &&
