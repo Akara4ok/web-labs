@@ -41,7 +41,6 @@ class Home extends React.PureComponent {
                         this.exceptionHandling(res[0]);
                         return;
                     }
-                    this.props.skipSub();
                     res?.ListName.map(element => Notes.push(element));
                     this.setState({ Notes, isLoading: false });
                 })

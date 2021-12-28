@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     ApolloClient,
     InMemoryCache,
     split,
     useSubscription,
+    ApolloProvider,
 } from '@apollo/client';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { HttpLink } from 'apollo-link-http';
@@ -16,40 +17,6 @@ import { setContext } from '@apollo/client/link/context';
 
 let isSkip = false;
 let authState = { token: '' };
-
-const httpLink = new HttpLink({
-    uri: `https://${config['link']}`,
-});
-
-const wsLink = new WebSocketLink({
-    uri: `wss://${config['link']}`,
-    options: {
-        reconnect: true,
-    },
-});
-
-const authLink = setContext((_, { headers }) => {
-    return {
-        headers: {
-            ...headers,
-            Authorization: `Bearer ${authState?.token}`,
-        },
-    };
-});
-
-const link = split(
-    ({ query }) => {
-        const { kind, operation } = getMainDefinition(query);
-        return kind === 'OperationDefinition' && operation === 'subscription';
-    },
-    wsLink,
-    authLink.concat(httpLink),
-);
-
-export const apolloClient = new ApolloClient({
-    cache: new InMemoryCache(),
-    link,
-});
 
 const tasksSubscriptions = gql`
     subscription tasksSubscriptions {
@@ -66,10 +33,16 @@ const tasksSubscriptions = gql`
     }
 `;
 
-export default function LastChanges() {
+function LastChanges(props) {
+    const [token, setToken] = useState('');
+    useEffect(() => {
+        if (token !== authState?.token) {
+            setToken(authState?.token);
+            props.changeFlag();
+        }
+    });
+    console.log(':(');
     let { data } = useSubscription(tasksSubscriptions);
-    console.log(authState);
-    console.log(data);
     if (isSkip) {
         isSkip = false;
         data = null;
@@ -84,5 +57,56 @@ export default function LastChanges() {
                 }}
             />
         </>
+    );
+}
+
+export default function Subscriptions() {
+    const [flag, setFlag] = useState(false);
+
+    const httpLink = new HttpLink({
+        uri: `https://${config['link']}`,
+    });
+
+    const wsLink = new WebSocketLink({
+        uri: `wss://${config['link']}`,
+        options: {
+            reconnect: true,
+            Authorization: `Bearer ${authState?.token}`,
+        },
+    });
+
+    const authLink = setContext((_, { headers }) => {
+        return {
+            headers: {
+                ...headers,
+                Authorization: `Bearer ${authState?.token}`,
+            },
+        };
+    });
+
+    const link = split(
+        ({ query }) => {
+            const { kind, operation } = getMainDefinition(query);
+            return (
+                kind === 'OperationDefinition' && operation === 'subscription'
+            );
+        },
+        wsLink,
+        authLink.concat(httpLink),
+    );
+
+    const apolloClient = new ApolloClient({
+        cache: new InMemoryCache(),
+        link,
+    });
+
+    return (
+        <ApolloProvider client={apolloClient}>
+            <LastChanges
+                changeFlag={() => {
+                    setFlag(!flag);
+                }}
+            />
+        </ApolloProvider>
     );
 }

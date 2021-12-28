@@ -1,15 +1,10 @@
 import React from 'react';
 import classes from './App.scss';
-import LastChanges from './HasuraAPI/HasuraSubscriptions';
 import { ApolloProvider } from '@apollo/client';
-import { apolloClient } from './HasuraAPI/HasuraSubscriptions';
+import Subscriptions from './HasuraAPI/HasuraSubscriptions';
 
 function App() {
-    return (
-        <ApolloProvider client={apolloClient}>
-            <LastChanges />
-        </ApolloProvider>
-    );
+    return <Subscriptions />;
 }
 
 export default App;
