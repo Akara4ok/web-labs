@@ -35,7 +35,7 @@ class SendMailForm extends React.Component {
             })
             .then(res => {
                 this.setState({
-                    popupMessages: res?.data?.data,
+                    popupMessages: [{ message: res?.data?.data }],
                     isRequest: false,
                     isSuccess: true,
                     name: '',

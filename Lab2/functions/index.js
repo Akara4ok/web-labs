@@ -94,14 +94,11 @@ exports.api = functions.https.onRequest((req, res) => {
             subject: 'Hello',
             html: output,
         })
-        .then(() => {
-            errorMessages.push({
-                message: 'Your message was successfully sent',
-            });
-            return res.json({
-                data: errorMessages,
-            });
-        })
+        .then(() =>
+            res.json({
+                data: 'Your message was successfully sent',
+            }),
+        )
         .catch(() => {
             errorMessages.push({ message: 'Something went wrong' });
             return res.status(500).json({
