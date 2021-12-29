@@ -3,6 +3,7 @@ import {
     ApolloClient,
     InMemoryCache,
     split,
+    concat,
     useSubscription,
     ApolloProvider,
 } from '@apollo/client';
@@ -34,14 +35,7 @@ const tasksSubscriptions = gql`
 `;
 
 function LastChanges(props) {
-    const [token, setToken] = useState('');
-    useEffect(() => {
-        if (token !== authState?.token) {
-            setToken(authState?.token);
-            props.changeFlag();
-        }
-    });
-    console.log(':(');
+    console.log('-><-');
     let { data } = useSubscription(tasksSubscriptions);
     if (isSkip) {
         isSkip = false;
@@ -50,6 +44,7 @@ function LastChanges(props) {
     return (
         <>
             <Layout
+                changeToken={props.changeToken}
                 authState={authState}
                 data={data}
                 skipSub={() => {
@@ -60,53 +55,56 @@ function LastChanges(props) {
     );
 }
 
-export default function Subscriptions() {
-    const [flag, setFlag] = useState(false);
+function Subscription() {
+    const [bearerToken, setBearerToken] = useState('');
 
-    const httpLink = new HttpLink({
-        uri: `https://${config['link']}`,
+    const authLink = setContext((_, { headers }) => {
+        if (!bearerToken) return { headers };
+
+        return {
+            headers: {
+                ...headers,
+                Authorization: `Bearer ${bearerToken}`,
+            },
+        };
     });
 
     const wsLink = new WebSocketLink({
         uri: `wss://${config['link']}`,
         options: {
             reconnect: true,
-            Authorization: `Bearer ${authState?.token}`,
+            connectionParams: () => ({
+                headers: {
+                    Authorization: `Bearer ${bearerToken}`,
+                },
+            }),
         },
     });
 
-    const authLink = setContext((_, { headers }) => {
-        return {
-            headers: {
-                ...headers,
-                Authorization: `Bearer ${authState?.token}`,
+    const client = new ApolloClient({
+        link: concat(authLink, wsLink),
+        cache: new InMemoryCache({
+            typePolicies: {
+                Subscription: {
+                    fields: {
+                        todos: {
+                            merge: false,
+                        },
+                    },
+                },
             },
-        };
+        }),
     });
-
-    const link = split(
-        ({ query }) => {
-            const { kind, operation } = getMainDefinition(query);
-            return (
-                kind === 'OperationDefinition' && operation === 'subscription'
-            );
-        },
-        wsLink,
-        authLink.concat(httpLink),
-    );
-
-    const apolloClient = new ApolloClient({
-        cache: new InMemoryCache(),
-        link,
-    });
-
+    console.log(bearerToken);
     return (
-        <ApolloProvider client={apolloClient}>
+        <ApolloProvider client={client}>
             <LastChanges
-                changeFlag={() => {
-                    setFlag(!flag);
+                changeToken={token => {
+                    setBearerToken(token);
                 }}
             />
         </ApolloProvider>
     );
 }
+
+export default Subscription;
