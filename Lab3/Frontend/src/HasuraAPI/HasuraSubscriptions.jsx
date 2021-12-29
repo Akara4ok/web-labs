@@ -17,7 +17,6 @@ import Layout from '../Components/Layout/Layout';
 import { setContext } from '@apollo/client/link/context';
 
 let isSkip = false;
-let authState = { token: '' };
 
 const tasksSubscriptions = gql`
     subscription tasksSubscriptions {
@@ -35,7 +34,6 @@ const tasksSubscriptions = gql`
 `;
 
 function LastChanges(props) {
-    console.log('-><-');
     let { data } = useSubscription(tasksSubscriptions);
     if (isSkip) {
         isSkip = false;
@@ -45,7 +43,6 @@ function LastChanges(props) {
         <>
             <Layout
                 changeToken={props.changeToken}
-                authState={authState}
                 data={data}
                 skipSub={() => {
                     isSkip = true;
@@ -95,7 +92,6 @@ function Subscription() {
             },
         }),
     });
-    console.log(bearerToken);
     return (
         <ApolloProvider client={client}>
             <LastChanges

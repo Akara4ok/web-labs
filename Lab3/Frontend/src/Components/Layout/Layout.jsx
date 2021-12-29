@@ -41,7 +41,6 @@ class Layout extends React.PureComponent {
                 const idTokenResult = await user.getIdTokenResult();
                 const hasuraClaim =
                     idTokenResult.claims['https://hasura.io/jwt/claims'];
-                this.props.authState.token = token;
                 this.props.changeToken(token);
                 if (hasuraClaim) {
                     this.setState({ authState: { status: 'in', user, token } });

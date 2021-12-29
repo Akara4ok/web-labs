@@ -1,6 +1,5 @@
 import { config } from './config.js';
 
-let authState = {};
 let isIn;
 let headers;
 
