@@ -20,32 +20,29 @@ class Home extends React.PureComponent {
     }
 
     componentDidMount = () => {
-        this.loadNotes();
+        if (!this.props.data) {
+            this.loadNotes();
+        }
     };
 
     componentDidUpdate = () => {
-        if (this.props.data) {
-            let Notes = this.props.data.ListName;
-            this.setState({ Notes });
-        }
+        let Notes = this.props.data?.ListName;
+        if (Notes) this.setState({ Notes });
     };
 
     loadNotes = () => {
         const Notes = [];
         this.setState({ isLoading: true });
-
-        if (!this.props.data) {
-            startFetchMyQuery('selectListName', {}, this.props.authState)
-                .then(res => {
-                    if (res[0]?.message) {
-                        this.exceptionHandling(res[0]);
-                        return;
-                    }
-                    res?.ListName.map(element => Notes.push(element));
-                    this.setState({ Notes, isLoading: false });
-                })
-                .catch(() => this.exceptionHandling());
-        }
+        startFetchMyQuery('selectListName', {}, this.props.authState)
+            .then(res => {
+                if (res[0]?.message) {
+                    this.exceptionHandling(res[0]);
+                    return;
+                }
+                res?.ListName.map(element => Notes.push(element));
+                this.setState({ Notes, isLoading: false });
+            })
+            .catch(() => this.exceptionHandling());
     };
 
     addNote = () => {
@@ -221,15 +218,15 @@ class Home extends React.PureComponent {
         const { Notes } = this.state;
         let index = Notes.findIndex(({ Id }) => Id === ListId);
         let taskIndex = Notes[index].Tasks.findIndex(({ Id }) => Id === TaskId);
-        Notes[index].Tasks[taskIndex].Checked =
-            !Notes[index].Tasks[taskIndex].Checked;
+        const oldTask = Notes[index].Tasks[taskIndex];
+        oldTask.Checked = !oldTask.Checked;
         this.setState({ Notes: [...Notes] });
         this.props.skipSub();
         startFetchMyQuery(
             'changeCheckBox',
             {
                 Id: Notes[index].Tasks[taskIndex].Id,
-                Checked: Notes[index].Tasks[taskIndex].Checked,
+                Checked: oldTask.Checked,
             },
             this.props.authState,
         )
@@ -239,7 +236,13 @@ class Home extends React.PureComponent {
                     return;
                 }
             })
-            .catch(() => this.exceptionHandling());
+            .catch(() => {
+                oldTask.Checked = !oldTask.Checked;
+
+                this.setState({ Notes });
+
+                this.exceptionHandling();
+            });
     };
 
     exceptionHandling = errors => {
