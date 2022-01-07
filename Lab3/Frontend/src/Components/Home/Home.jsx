@@ -108,7 +108,8 @@ class Home extends React.PureComponent {
                     this.setState({ Notes });
                 })
                 .catch(() => {
-                    Notes[index].ListName = oldList;
+                    this.setState({ isLoading: false });
+                    Notes.pop();
                     this.exceptionHandling();
                 });
             return;
@@ -128,6 +129,7 @@ class Home extends React.PureComponent {
                 }
             })
             .catch(() => {
+                Notes[index].ListName = oldList;
                 this.exceptionHandling();
             });
         this.setState({ Notes });
