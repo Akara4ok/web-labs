@@ -88,7 +88,7 @@ class Home extends React.PureComponent {
     updateNoteTitle = (ListId, newTitle, isNewNote) => {
         const { Notes } = this.state;
         let index = Notes.findIndex(({ Id }) => Id === ListId);
-        const oldList = Notes[index].ListName;
+        const oldList = Notes[index].ListName + ' ';
         Notes[index].ListName = newTitle;
         this.props.skipSub();
         if (isNewNote) {
@@ -181,7 +181,7 @@ class Home extends React.PureComponent {
         const { Notes } = this.state;
         let index = Notes.findIndex(({ Id }) => Id === ListId);
         let taskIndex = Notes[index].Tasks.findIndex(({ Id }) => Id === TaskId);
-        const oldTask = Notes[index].Tasks[taskIndex].TaskName;
+        let oldTask = Notes[index].Tasks[taskIndex].TaskName + ' ';
         Notes[index].Tasks[taskIndex] = {
             Id: Notes[index].Tasks[taskIndex].Id,
             TaskName: newTaskName,
