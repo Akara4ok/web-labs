@@ -14,7 +14,6 @@ class Home extends React.PureComponent {
             Notes: [],
             isLoading: true,
             lim: 5,
-            requestStatus: 200,
             errorMessage: '',
         };
     }
@@ -59,7 +58,12 @@ class Home extends React.PureComponent {
     deleteNote = element => {
         const { Notes } = this.state;
         let index = Notes.indexOf(element);
+        const oldList = Notes[index];
         this.props.skipSub();
+        Notes.splice(index, 1);
+        this.setState({
+            Notes: [...Notes],
+        });
         if (element.ListName)
             startFetchMyQuery(
                 'deleteList',
@@ -72,16 +76,19 @@ class Home extends React.PureComponent {
                         return;
                     }
                 })
-                .catch(() => this.exceptionHandling());
-        Notes.splice(index, 1);
-        this.setState({
-            Notes: [...Notes],
-        });
+                .catch(() => {
+                    Notes.splice(index, 0, oldList);
+                    this.setState({
+                        Notes: [...Notes],
+                    });
+                    this.exceptionHandling();
+                });
     };
 
     updateNoteTitle = (ListId, newTitle, isNewNote) => {
         const { Notes } = this.state;
         let index = Notes.findIndex(({ Id }) => Id === ListId);
+        const oldList = Notes[index].ListName;
         Notes[index].ListName = newTitle;
         this.props.skipSub();
         if (isNewNote) {
@@ -100,7 +107,10 @@ class Home extends React.PureComponent {
                     Notes[index].Id = res.insert_ListName.returning[0].Id;
                     this.setState({ Notes });
                 })
-                .catch(() => this.exceptionHandling());
+                .catch(() => {
+                    Notes[index].ListName = oldList;
+                    this.exceptionHandling();
+                });
             return;
         }
         startFetchMyQuery(
@@ -117,7 +127,9 @@ class Home extends React.PureComponent {
                     return;
                 }
             })
-            .catch(() => this.exceptionHandling());
+            .catch(() => {
+                this.exceptionHandling();
+            });
         this.setState({ Notes });
     };
 
@@ -137,6 +149,7 @@ class Home extends React.PureComponent {
         const { Notes } = this.state;
         let index = Notes.findIndex(({ Id }) => Id === ListId);
         let taskIndex = Notes[index].Tasks.findIndex(({ Id }) => Id === TaskId);
+        const oldTask = Notes[index].Tasks[taskIndex];
         this.props.skipSub();
         if (Notes[index].Tasks[taskIndex].TaskName)
             startFetchMyQuery(
@@ -152,7 +165,10 @@ class Home extends React.PureComponent {
                         return;
                     }
                 })
-                .catch(() => this.exceptionHandling());
+                .catch(() => {
+                    Notes[index].Tasks.splice(taskIndex, 0, oldTask);
+                    this.exceptionHandling();
+                });
         Notes[index].Tasks.splice(taskIndex, 1);
         this.setState({
             Notes: [...Notes],
@@ -163,13 +179,13 @@ class Home extends React.PureComponent {
         const { Notes } = this.state;
         let index = Notes.findIndex(({ Id }) => Id === ListId);
         let taskIndex = Notes[index].Tasks.findIndex(({ Id }) => Id === TaskId);
+        const oldTask = Notes[index].Tasks[taskIndex].TaskName;
         Notes[index].Tasks[taskIndex] = {
             Id: Notes[index].Tasks[taskIndex].Id,
             TaskName: newTaskName,
             Checked: Notes[index].Tasks[taskIndex].Checked,
         };
         this.props.skipSub();
-        this.setState({ Notes });
         if (isNewTask) {
             this.setState({ isLoading: true });
             startFetchMyQuery(
@@ -193,7 +209,11 @@ class Home extends React.PureComponent {
                     };
                     this.setState({ Notes: [...Notes] });
                 })
-                .catch(() => this.exceptionHandling());
+                .catch(() => {
+                    this.setState({ isLoading: false });
+                    Notes[index].Tasks.pop();
+                    this.exceptionHandling();
+                });
             return;
         }
         startFetchMyQuery(
@@ -210,8 +230,10 @@ class Home extends React.PureComponent {
                     return;
                 }
             })
-            .catch(() => this.exceptionHandling());
-        this.setState({ Notes });
+            .catch(() => {
+                Notes[index].Tasks[taskIndex].TaskName = oldTask;
+                this.exceptionHandling();
+            });
     };
 
     changeCheckBox = (ListId, TaskId) => {
@@ -238,47 +260,23 @@ class Home extends React.PureComponent {
             })
             .catch(() => {
                 oldTask.Checked = !oldTask.Checked;
-
-                this.setState({ Notes });
-
                 this.exceptionHandling();
             });
     };
 
     exceptionHandling = errors => {
-        if (!errors) {
-            this.setState({
-                requestStatus: 500,
-                errorMessage: 'Something went wrong...',
-            });
-            return;
-        }
-        if (
-            errors?.message ===
-            'hasura cloud limit of 60 requests/minute exceeded'
-        ) {
-            this.setState({
-                requestStatus: 429,
-                errorMessage: errors.message,
-            });
-            return;
-        }
         this.setState({
-            requestStatus: 500,
-            errorMessage: 'Something went wrong...',
+            errorMessage: errors?.message ?? 'Something went wrong...',
         });
         return;
     };
 
     onOkClicked = () => {
-        const { requestStatus } = this.state;
-        this.setState({ requestStatus: 200, errorMessage: '' });
-        if (requestStatus !== 200) this.loadNotes();
+        this.setState({ errorMessage: '' });
     };
 
     render() {
-        const { Notes, isLoading, lim, requestStatus, errorMessage } =
-            this.state;
+        const { Notes, isLoading, lim, errorMessage } = this.state;
         return (
             <div>
                 <main>
@@ -309,7 +307,7 @@ class Home extends React.PureComponent {
                         </Popup>
                     ) : null}
                 </main>
-                {requestStatus !== 200 ? (
+                {errorMessage ? (
                     <Popup>
                         <Message onClose={this.onOkClicked}>
                             {errorMessage}
