@@ -41,7 +41,7 @@ class Home extends React.PureComponent {
                 res?.ListName.map(element => Notes.push(element));
                 this.setState({ Notes, isLoading: false });
             })
-            .catch(() => this.exceptionHandling());
+            .catch(this.exceptionHandling);
     };
 
     addNote = () => {
@@ -88,8 +88,9 @@ class Home extends React.PureComponent {
     updateNoteTitle = (ListId, newTitle, isNewNote) => {
         const { Notes } = this.state;
         let index = Notes.findIndex(({ Id }) => Id === ListId);
-        const oldList = Notes[index].ListName + ' ';
+        const oldList = Notes[index].ListName;
         Notes[index].ListName = newTitle;
+        this.setState({ Notes: [...Notes] });
         this.props.skipSub();
         if (isNewNote) {
             this.setState({ isLoading: true });
@@ -108,8 +109,8 @@ class Home extends React.PureComponent {
                     this.setState({ Notes });
                 })
                 .catch(() => {
-                    this.setState({ isLoading: false });
                     Notes.pop();
+                    this.setState({ Notes: [...Notes], isLoading: false });
                     this.exceptionHandling();
                 });
             return;
@@ -132,7 +133,6 @@ class Home extends React.PureComponent {
                 Notes[index].ListName = oldList;
                 this.exceptionHandling();
             });
-        this.setState({ Notes });
     };
 
     addTask = element => {
@@ -181,12 +181,13 @@ class Home extends React.PureComponent {
         const { Notes } = this.state;
         let index = Notes.findIndex(({ Id }) => Id === ListId);
         let taskIndex = Notes[index].Tasks.findIndex(({ Id }) => Id === TaskId);
-        let oldTask = Notes[index].Tasks[taskIndex].TaskName + ' ';
+        const oldTask = Notes[index].Tasks[taskIndex].TaskName;
         Notes[index].Tasks[taskIndex] = {
             Id: Notes[index].Tasks[taskIndex].Id,
             TaskName: newTaskName,
             Checked: Notes[index].Tasks[taskIndex].Checked,
         };
+        this.setState({ Notes: [...Notes] });
         this.props.skipSub();
         if (isNewTask) {
             this.setState({ isLoading: true });

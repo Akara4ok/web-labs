@@ -39,7 +39,7 @@ class NoteList extends React.PureComponent {
 
     render() {
         const { Tasks, lim, Id } = this.state;
-        let { lastName, currentName } = this.state;
+        let { currentName } = this.state;
         return (
             <div>
                 <div className={classes.note}>

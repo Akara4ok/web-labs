@@ -1,17 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
     ApolloClient,
     InMemoryCache,
-    split,
     concat,
     useSubscription,
     ApolloProvider,
 } from '@apollo/client';
-import { getMainDefinition } from '@apollo/client/utilities';
-import { HttpLink } from 'apollo-link-http';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import gql from 'graphql-tag';
-import Home from '../Components/Home/Home';
 import { config } from './config.js';
 import Layout from '../Components/Layout/Layout';
 import { setContext } from '@apollo/client/link/context';

@@ -1,5 +1,4 @@
 import React from 'react';
-import Spinner from './Spinner';
 import classes from './Popup.scss';
 
 class Popup extends React.Component {

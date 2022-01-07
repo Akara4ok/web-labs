@@ -21,7 +21,7 @@ class NoteLine extends React.PureComponent {
 
     render() {
         const { isTaskDone } = this.state;
-        let { lastName, currentName } = this.state;
+        let { currentName } = this.state;
         return (
             <div className={classes.container}>
                 <Button onClick={this.props.deleteTask}> &#10006; </Button>

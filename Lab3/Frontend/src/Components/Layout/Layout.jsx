@@ -3,7 +3,6 @@ import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 import 'firebase/compat/database';
 import React from 'react';
-import Button from '../Button/Button';
 import classes from './Layout.scss';
 import Home from '../Home/Home';
 import Popup from '../Popup/Popup';
