@@ -34,10 +34,7 @@ class Home extends React.PureComponent {
         this.setState({ isLoading: true });
         startFetchMyQuery('selectListName', {}, this.props.authState)
             .then(res => {
-                if (res[0]?.message) {
-                    this.exceptionHandling(res[0]);
-                    return;
-                }
+                if (res[0]?.message) throw res[0];
                 res?.ListName.map(element => Notes.push(element));
                 this.setState({ Notes, isLoading: false });
             })
@@ -45,8 +42,7 @@ class Home extends React.PureComponent {
     };
 
     addNote = () => {
-        const { Notes } = this.state;
-        let { autokey } = this.state;
+        let { Notes, autokey } = this.state;
         let Id = autokey;
         autokey++;
         let ListName = '';
@@ -71,17 +67,14 @@ class Home extends React.PureComponent {
                 this.props.authState,
             )
                 .then(res => {
-                    if (res[0]?.message) {
-                        this.exceptionHandling(res[0]);
-                        return;
-                    }
+                    if (res[0]?.message) throw res[0];
                 })
-                .catch(() => {
+                .catch(e => {
                     Notes.splice(index, 0, oldList);
                     this.setState({
                         Notes: [...Notes],
                     });
-                    this.exceptionHandling();
+                    this.exceptionHandling(e);
                 });
     };
 
@@ -101,17 +94,14 @@ class Home extends React.PureComponent {
             )
                 .then(res => {
                     this.setState({ isLoading: false });
-                    if (res[0]?.message) {
-                        this.exceptionHandling(res[0]);
-                        return;
-                    }
+                    if (res[0]?.message) throw res[0];
                     Notes[index].Id = res.insert_ListName.returning[0].Id;
                     this.setState({ Notes });
                 })
-                .catch(() => {
+                .catch(e => {
                     Notes.pop();
                     this.setState({ Notes: [...Notes], isLoading: false });
-                    this.exceptionHandling();
+                    this.exceptionHandling(e);
                 });
             return;
         }
@@ -124,14 +114,11 @@ class Home extends React.PureComponent {
             this.props.authState,
         )
             .then(res => {
-                if (res[0]?.message) {
-                    this.exceptionHandling(res[0]);
-                    return;
-                }
+                if (res[0]?.message) if (res[0]?.message) throw res[0];
             })
-            .catch(() => {
+            .catch(e => {
                 Notes[index].ListName = oldList;
-                this.exceptionHandling();
+                this.exceptionHandling(e);
             });
     };
 
@@ -162,14 +149,11 @@ class Home extends React.PureComponent {
                 this.props.authState,
             )
                 .then(res => {
-                    if (res[0]?.message) {
-                        this.exceptionHandling(res[0]);
-                        return;
-                    }
+                    if (res[0]?.message) throw res[0];
                 })
-                .catch(() => {
+                .catch(e => {
                     Notes[index].Tasks.splice(taskIndex, 0, oldTask);
-                    this.exceptionHandling();
+                    this.exceptionHandling(e);
                 });
         Notes[index].Tasks.splice(taskIndex, 1);
         this.setState({
@@ -201,10 +185,7 @@ class Home extends React.PureComponent {
             )
                 .then(res => {
                     this.setState({ isLoading: false });
-                    if (res[0]?.message) {
-                        this.exceptionHandling(res[0]);
-                        return;
-                    }
+                    if (res[0]?.message) throw res[0];
                     Notes[index].Tasks[taskIndex] = {
                         Id: res.insert_Tasks.returning[0].Id,
                         TaskName: newTaskName,
@@ -212,10 +193,10 @@ class Home extends React.PureComponent {
                     };
                     this.setState({ Notes: [...Notes] });
                 })
-                .catch(() => {
+                .catch(e => {
                     this.setState({ isLoading: false });
                     Notes[index].Tasks.pop();
-                    this.exceptionHandling();
+                    this.exceptionHandling(e);
                 });
             return;
         }
@@ -228,14 +209,11 @@ class Home extends React.PureComponent {
             this.props.authState,
         )
             .then(res => {
-                if (res[0]?.message) {
-                    this.exceptionHandling(res[0]);
-                    return;
-                }
+                if (res[0]?.message) throw res[0];
             })
-            .catch(() => {
+            .catch(e => {
                 Notes[index].Tasks[taskIndex].TaskName = oldTask;
-                this.exceptionHandling();
+                this.exceptionHandling(e);
             });
     };
 
@@ -256,14 +234,11 @@ class Home extends React.PureComponent {
             this.props.authState,
         )
             .then(res => {
-                if (res[0]?.message) {
-                    this.exceptionHandling(res[0]);
-                    return;
-                }
+                if (res[0]?.message) throw res[0];
             })
-            .catch(() => {
+            .catch(e => {
                 oldTask.Checked = !oldTask.Checked;
-                this.exceptionHandling();
+                this.exceptionHandling(e);
             });
     };
 
