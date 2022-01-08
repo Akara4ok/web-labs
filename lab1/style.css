@@ -156,10 +156,10 @@ body {
     grid-template-rows: auto auto auto auto;
     grid-template-columns: 1fr 3fr 3fr 1fr;
     grid-template-areas:
-        "header header header header"
-        "aside main main nav"
-        "aside main main nav"
-        "footer footer footer nav";
+        'header header header header'
+        'aside main main nav'
+        'aside main main nav'
+        'footer footer footer nav';
 }
 
 .board-game {
