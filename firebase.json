@@ -1,6 +1,6 @@
 {
     "hosting": {
-        "public": "Lab4",
+        "public": "./Lab3/Frontend/dist",
         "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
         "rewrites": [
             {
@@ -8,5 +8,8 @@
                 "destination": "/index.html"
             }
         ]
+    },
+    "functions": {
+        "source": "Lab3/functions"
     }
 }
