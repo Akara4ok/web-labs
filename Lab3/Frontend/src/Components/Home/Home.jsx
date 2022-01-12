@@ -38,9 +38,9 @@ class Home extends React.PureComponent {
                 res?.ListName.map(element => Notes.push(element));
                 this.setState({ Notes, isLoading: false });
             })
-            .catch(() => {
+            .catch(e => {
                 this.setState({ isLoading: false });
-                this.exceptionHandling();
+                this.exceptionHandling(e);
             });
     };
 
@@ -254,6 +254,7 @@ class Home extends React.PureComponent {
 
     onOkClicked = () => {
         this.setState({ errorMessage: '' });
+        this.loadNotes();
     };
 
     render() {
